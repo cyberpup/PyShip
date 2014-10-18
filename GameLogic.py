@@ -160,9 +160,8 @@ print logic.isCellTaken("i8")
 print logic.isCellTaken("f5")
 '''
        
-# Test Game Logic
-
-GameLogic().printShips()
+# Test Place Ships Logic
+#GameLogic().printShips()
 
 
 
