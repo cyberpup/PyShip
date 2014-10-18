@@ -30,6 +30,7 @@ class GameGrid:
             for col in row:
                 print col,
             print ""
+        print ""
                 
                 
     
