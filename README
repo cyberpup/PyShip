@@ -6,3 +6,6 @@ Adding scoring logic to keep track of hits
 
 Dictionary keeping score
 
+Replacing lists of sets with dictionary of sets
+to make it easier to keep scores and access ship
+information.
