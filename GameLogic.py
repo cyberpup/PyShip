@@ -45,15 +45,71 @@ class GameLogic:
     # DEBUG
     def printShips(self):
         grid = GameGrid()
-        for ship in self.ships:
+        for ship, ID in enumerate(self.ships):
             if ship == self.ships[0] or ship == self.ships[1]:# drill down into nested list of sets   
-                for count in ship:
+                for count, shipID in enumerate(ship):
                     for cell in count:
+                        #determine shipID
                         grid.update(cell)
+                        if(ID == 0):
+                            finalID = ID + shipID
+                        else:
+                            if(shipID == 0):
+                                finalID = 2
+                            else:
+                                finalID = 3
+                        self.keepScore(finalID)
             else:
                 for cell in ship:
+                    #determine shipID
                     grid.update(cell)
+                    self.keepScore(ID + 2)
         grid.display()
+    
+    # Create a dictionary for tracking hits
+    # contains starting values
+    # values are deducted until zero is reached
+    # player wins when all entries are zero
+    score = {'s1':1, 's2':1, 'd1':2, 'd2':2, 'c':3, 'b':4, 'a':5}
+    
+    def keepScore(self, shipID):
+        if shipID == 0:
+            self.score['s1'] = self.score['s1'] - 1
+            if self.score['s1'] == 0:
+                # print "You sank my submarine!"
+                # update display with 'S' instead of 'X'
+        elif shipID == 1:
+            self.score['s2'] = self.score['s2'] - 1
+            if self.score['s2'] == 0:
+                # print "You sank my submarine!"
+                # update display
+        elif shipID == 2:
+            self.score['d1'] = self.score['d1'] - 1
+            if self.score['d1'] == 0:
+                # print "You sank my submarine!"
+                # update display
+        elif shipID == 3:
+            self.score['d2'] = self.score['d2'] - 1
+            if self.score['d2'] == 0:
+                # print "You sank my submarine!"
+                # update display
+        elif shipID == 4:
+            self.score['c'] = self.score['c'] - 1
+            if self.score['c'] == 0:
+                # print "You sank my submarine!"
+                # update display
+        elif shipID == 5:
+            self.score['b'] = self.score['b'] - 1
+            if self.score['b'] == 0:
+                # print "You sank my submarine!"
+                # update display
+        else:
+            self.score['a'] = self.score['a'] - 1
+            if self.score['a'] == 0:
+                # print "You sank my submarine!"
+                # update display
+            
+        print self.score
     
     def createShips(self):
         for size in range(5,0,-1):
@@ -175,7 +231,7 @@ print logic.isCellTaken("f5")
 '''
        
 # Test Place Ships Logic
-#GameLogic().printShips()
+GameLogic().keepScore(3)
 
 
 
