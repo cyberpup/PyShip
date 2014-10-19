@@ -22,15 +22,6 @@ def isValidGuess(guess):
         return False
 
 
-
-
-
-
-
-
-
-
-
 print ("""\
 
 Welcome to PYSHIP!
@@ -54,7 +45,7 @@ logic = GameLogic()
 '''
 Initialize Game View
 
-1. Displays Game Grid
+Displays Game Grid
 '''
 grid = GameGrid()
 
@@ -63,7 +54,13 @@ while True:
     grid.display()
     guess = raw_input("Your guess: ")
     print""
+    
     while not isValidGuess(guess):
         guess = raw_input("Please guess again: ")
         print""
+        
+    if logic.fire(guess):
+        grid.update(guess)
+        grid.display()
+    
     

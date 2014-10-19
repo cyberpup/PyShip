@@ -67,6 +67,20 @@ class GameLogic:
                     while not self.placeShip(size):
                         pass
 
+    def fire(self,guess):
+        for ship in self.ships:
+            if ship == self.ships[0] or ship == self.ships[1]:# drill down into nested list of sets   
+                for count in ship:
+                    for cell in count:
+                        if guess == cell:
+                            return True             
+            else:
+                for cell in ship:
+                    if guess == cell:
+                        return True
+        return False
+                    
+        
     
     def placeShip(self, size):
   
