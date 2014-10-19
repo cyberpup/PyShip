@@ -33,195 +33,140 @@ class GameLogic:
     
     rowKeys = "abcdefghij"
     colKeys = "0123456789"
-    
-    def __init__(self):
-        
-        # ships = [sub1, sub2, destroyer1, destroyer2, cruiser, battleship, air_carrier]
-        self.ships = [[], [], set(), set(), set()]   
+    ships = {}
+    score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
+    shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
 
-        self.createShips()
-
- 
-    # DEBUG
-    def printShips(self):
-        grid = GameGrid()
-        for ship, ID in enumerate(self.ships):
-            if ship == self.ships[0] or ship == self.ships[1]:# drill down into nested list of sets   
-                for count, shipID in enumerate(ship):
-                    for cell in count:
-                        #determine shipID
-                        grid.update(cell)
-                        if(ID == 0):
-                            finalID = ID + shipID
-                        else:
-                            if(shipID == 0):
-                                finalID = 2
-                            else:
-                                finalID = 3
-                        self.keepScore(finalID)
-            else:
-                for cell in ship:
-                    #determine shipID
-                    grid.update(cell)
-                    self.keepScore(ID + 2)
-        grid.display()
-    
-    # Create a dictionary for tracking hits
-    # contains starting values
+    # score tracks hits to ships
     # values are deducted until zero is reached
     # player wins when all entries are zero
-    score = {'s1':1, 's2':1, 'd1':2, 'd2':2, 'c':3, 'b':4, 'a':5}
-    
-    def keepScore(self, shipID):
-        if shipID == 0:
-            self.score['s1'] = self.score['s1'] - 1
-            if self.score['s1'] == 0:
-                # print "You sank my submarine!"
-                # update display with 'S' instead of 'X'
-        elif shipID == 1:
-            self.score['s2'] = self.score['s2'] - 1
-            if self.score['s2'] == 0:
-                # print "You sank my submarine!"
-                # update display
-        elif shipID == 2:
-            self.score['d1'] = self.score['d1'] - 1
-            if self.score['d1'] == 0:
-                # print "You sank my submarine!"
-                # update display
-        elif shipID == 3:
-            self.score['d2'] = self.score['d2'] - 1
-            if self.score['d2'] == 0:
-                # print "You sank my submarine!"
-                # update display
-        elif shipID == 4:
-            self.score['c'] = self.score['c'] - 1
-            if self.score['c'] == 0:
-                # print "You sank my submarine!"
-                # update display
-        elif shipID == 5:
-            self.score['b'] = self.score['b'] - 1
-            if self.score['b'] == 0:
-                # print "You sank my submarine!"
-                # update display
-        else:
-            self.score['a'] = self.score['a'] - 1
-            if self.score['a'] == 0:
-                # print "You sank my submarine!"
-                # update display
-            
-        print self.score
-    
-    def createShips(self):
-        for size in range(5,0,-1):
-            if(size>2):
-                #place one 
-                while not self.placeShip(size):
-                    pass
-            else:
-                #otherwise place two
-                for multiship in range(0,2):
-                    while not self.placeShip(size):
-                        pass
+    def __init__(self):
 
-    def fire(self,guess):
-        for ship in self.ships:
-            if ship == self.ships[0] or ship == self.ships[1]:# drill down into nested list of sets   
-                for count in ship:
-                    for cell in count:
-                        if guess == cell:
-                            return True             
-            else:
-                for cell in ship:
-                    if guess == cell:
-                        return True
-        return False
-                    
+        self.createShips()
         
-    
+    # DEBUG
+    # Prints all ships on game grid
+    def printAIShips(self):
+        
+        grid = GameGrid()
+        for shipKey, shipSet in self.ships.items():
+            for cell in shipSet:
+                grid.updateAI(cell, self.reportShip(shipKey))  
+        grid.display()
+
+    # Returns a 'X' if no ship is sunk
+    # or
+    # Returns first letter of ship type sunk
+    def keepScore(self, shipKey):
+        
+        self.score[shipKey] = self.score[shipKey] - 1
+        if self.score[shipKey] == 0:
+            return self.reportShip(shipKey), shipKey
+        else:
+            return 'X', None
+     
+    # Create All Ships
+    def createShips(self):
+                                  
+        for shipKey, shipSize in self.shipSizes.items():
+               
+            # Keep placing ship until it fits onto the grid.
+            while not self.placeShip(shipSize):
+                pass
+            # Place ship
+            self.ships[shipKey] = self.tempSet.copy()
+            self.tempSet.clear()
+     
+    # Given player's guess
+    # A hit returns True and updates score
+    # A miss returns False     
+    def fire(self,guess):
+        
+        for shipKey, ship in self.ships.items():
+            # Hit
+            if guess in ship: 
+                label, shipKey = self.keepScore(shipKey) 
+                return True, label, shipKey
+        # Miss
+        return False, None, None
+
+    # Randomly places one ship 
+    # Returns True if placement is successful (i.e. No Collisions)
     def placeShip(self, size):
   
         # determine horizontal or vertical placement
         direction = randint(0,1)
         # restrict ship within columns or rows
         index = randint(0, 9-size) 
-
-        tempSize = size
-        tempSet = set()
         
-        if (direction==0):#horizontal - only columns change      
+        # horizontal - only columns change
+        if (direction==0):                          
             row = self.rowKeys[randint(0,9)]
-            col = self.colKeys[index] 
-            cell = row + col
-       
-            # generate cells until ship can be placed
-            while not self.isCellTaken(cell) and tempSize > 0:
-                if (size<3):
-                    tempSet.add(cell) # add separately as a nested set
-                else:
-                    self.ships[size-1].add(cell)
-                    
-                index += 1
-                if index < len(self.colKeys):# out of bounds error possible
-                    col = self.colKeys[index] 
-                else:
-                    break
-                cell = row + col 
-                tempSize-=1  
-              
-        else:#vertical - only rows change
-            
+            col = self.colKeys[index]    
+            return self.generateCells(row, col, size, index, direction)
+        
+        #vertical - only rows change   
+        else:                                          
             row = self.rowKeys[index] 
             col = self.colKeys[randint(0,9)] 
-            cell = row + col
-            
-            # generate cells until ship is placed
-            while not self.isCellTaken(cell) and tempSize > 0:
-                if (size<3):
-                    tempSet.add(cell) # add separately as a nested set
-                else:
-                    self.ships[size-1].add(cell)
-                index += 1
-                if index < len(self.rowKeys):# out of bounds error possible
-                    row = self.rowKeys[index] 
-                else:
+            return self.generateCells(row, col, size, index, direction) 
+
+    # Return True if no collision is detected
+    tempSet = set()   
+    def generateCells(self, row, col, size, index, direction):
+        
+        cell = row + col
+        # Generate next adjacent cell until collision detected  
+        while not self.isCollision(cell) and size > 0:
+            self.tempSet.add(cell)
+            index += 1
+            # horizontal
+            if direction == 0:
+                # check for index out of bounds error
+                if index < len(self.colKeys):
+                    col = self.colKeys[index] 
+                else:           
                     break
-                cell = row + col 
-                tempSize-=1 
-                
-        if not tempSize == 0:
-            if size < 3: # ship cannot be placed
-                tempSet.clear()
+            # vertical
             else:
-                self.ships[size-1].clear()         
-            return False
-        else:
-            if (size < 3): # nested set in self.ships
-                self.ships[size-1].append(tempSet)
+                # check for index out of bounds error
+                if index < len(self.rowKeys):
+                    row = self.rowKeys[index] 
+                else:         
+                    break
+                
+            cell = row + col 
+            size-=1 
+        
+        # No Collision detected
+        # Save generated cells
+        if size == 0:
             return True
-  
-    # Checks if cell is occupied (passed)
-    def isCellTaken(self, cell):
-        # check against existing ships
-        for ship in self.ships:
-            if cell in ship:
+        # Collision detected
+        # Discard generated cells
+        else:
+            self.tempSet.clear()
+            return False
+
+    # Returns True if collision detected
+    def isCollision(self, cell):
+        
+        # Check collisions with ships already placed
+        for shipKey, shipSet in self.ships.items():
+            if cell in shipSet:
                 return True
             else:
                 continue
         return False
-                
-      
-    def reportShip(self, size):
+                   
+    def reportShip(self, shipKey):
         
-        if size == 5:
-            return "Aircraft Carrier"
-        elif size == 4:
-            return "Battleship"
-        elif size == 3:
-            return "Cruiser"
-        elif size == 2:
-            return "Destroyer"
+        if shipKey == 'D1' or shipKey == 'D2':
+            return "D"
+        elif shipKey == 'S1' or shipKey == 'S2':
+            return "S"
         else:
-            return "Submarine"
+            return shipKey
         
 '''
 # Test isCellTaken
@@ -231,13 +176,13 @@ print logic.isCellTaken("f5")
 '''
        
 # Test Place Ships Logic
-GameLogic().keepScore(3)
+# GameLogic().printAIShips()
 
 
 
 '''
 
-#These "asserts" using only for self-checking and not necessary for auto-testing        
+#These "asserts" using only for self-checking      
 if __name__ == '__main__':
     assert GameLogic().reportShip(1)=="Submarine", "wrong type"
     assert GameLogic().reportShip(3)=="Cruiser", "wrong type"

@@ -9,7 +9,6 @@ import sys
 
 
 
-
 def isValidGuess(guess): 
     row = "abcdefghij"
     col = "0123456789"
@@ -40,7 +39,7 @@ Takes the user input
 calculates hits/misses 
 Keeps score
 '''
-logic = GameLogic()
+game = GameLogic()
 
 '''
 Initialize Game View
@@ -58,9 +57,21 @@ while True:
     while not isValidGuess(guess):
         guess = raw_input("Please guess again: ")
         print""
+    
+    result, label, shipKey = game.fire(guess)
+
+    if result:
+        if label == "X":
+            grid.updateAI(guess, label)
+            print("hit!")
+        else:
+            # Find a way to update all labels in grid
+            for ship in game.ships[shipKey]:
+                grid.updateAI(ship, label)
+            print("Ship sunk!")
+    else:
+        print("Miss!")
         
-    if logic.fire(guess):
-        grid.update(guess)
-        grid.display()
+    print""
     
     
