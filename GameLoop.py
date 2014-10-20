@@ -5,9 +5,6 @@ Created on Oct 17, 2014
 '''
 from GameLogic import GameLogic
 from GameGrid import GameGrid
-import sys
-
-
 
 def isValidGuess(guess): 
     row = "abcdefghij"
@@ -50,6 +47,14 @@ grid = GameGrid()
 
 # Game Loop
 while True:
+    
+    # Display Setup Grid
+    # Player places ships on grid
+    
+    
+    
+    # Begin Game
+    
     grid.display()
     guess = raw_input("Your guess: ")
     print""

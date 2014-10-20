@@ -1,7 +1,48 @@
+GameLogic
 
-Main, Research, Live branches created
+* Keeps Score
 
-PyShip AI and Player game maps added 
+* Determines Hit/Miss
+
+* Determines if ships are sunk
+
+* Knows placement of all ships
+
+* Checks if placement of ship is valid
+
+* Processes fire orders from player and AI
+
+
+Player View
+
+* Guides player in ship placement
+
+* Allows player to issue fire order
+
+
+GameGrid
+
+* Displays AI and Player grids
+
+* is updated by Game Loop Manager
+
+
+AI View
+
+* Randomly places ships
+
+* Sends guess to Game Logic
+
+
+Game Manager
+
+* manages turns between AI and Player
+
+* determines when to display grid
+
+* shuts game down
+
+
 
 
 
