@@ -33,6 +33,7 @@ class GameLogic:
     
     rowKeys = "abcdefghij"
     colKeys = "0123456789"
+    playerShips = {}
     ships = {}
     score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
@@ -117,7 +118,7 @@ class GameLogic:
         
         cell = row + col
         # Generate next adjacent cell until collision detected  
-        while not self.isCollision(cell) and size > 0:
+        while not self.isCollision(cell,"AI") and size > 0:
             self.tempSet.add(cell)
             index += 1
             # horizontal
@@ -149,14 +150,30 @@ class GameLogic:
             return False
 
     # Returns True if collision detected
-    def isCollision(self, cell):
+    def isCollision(self, cell, user):
         
-        # Check collisions with ships already placed
-        for shipKey, shipSet in self.ships.items():
-            if cell in shipSet:
-                return True
-            else:
-                continue
+        # Human Request
+        if user == 'player':
+
+            #DEBUGprint "Player ships ", self.playerShips 
+            
+            # Check collisions with Human ships already placed
+            for shipKey, shipSet in self.playerShips.items():
+                if cell in shipSet:
+                    
+                    #DEBUG print "COLLISION!" 
+                    
+                    return True
+                else:
+                    continue
+        # AI Request
+        else:
+            # Check collisions with Human ships already placed
+            for shipKey, shipSet in self.ships.items():
+                if cell in shipSet:
+                    return True
+                else:
+                    continue
         return False
                    
     def reportShip(self, shipKey):
@@ -167,6 +184,12 @@ class GameLogic:
             return "S"
         else:
             return shipKey
+        
+    def addShip(self, ship, label):
+        self.playerShips[label] = ship
+        
+    def getPlayerShips(self):
+        return self.playerShips
         
 '''
 # Test isCellTaken

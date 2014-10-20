@@ -5,6 +5,7 @@ Created on Oct 17, 2014
 '''
 from GameLogic import GameLogic
 from GameGrid import GameGrid
+from HumanView import HumanView
 
 def isValidGuess(guess): 
     row = "abcdefghij"
@@ -45,17 +46,30 @@ Displays Game Grid
 '''
 grid = GameGrid()
 
+
+'''
+Initialize Human View
+
+Helps Player place ships
+'''
+player = HumanView()
+
+# Display Setup Grid
+# Player places ships on grid
+  
+while True:
+    player.displayMenu(shipKeys)
+    player.
+
+
+
 # Game Loop
 while True:
-    
-    # Display Setup Grid
-    # Player places ships on grid
-    
     
     
     # Begin Game
     
-    grid.display()
+    grid.displayDual()
     guess = raw_input("Your guess: ")
     print""
     

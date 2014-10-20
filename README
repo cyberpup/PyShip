@@ -26,6 +26,7 @@ GameGrid
 
 * is updated by Game Loop Manager
 
+* Displays Player only grid for initial ship placement
 
 AI View
 

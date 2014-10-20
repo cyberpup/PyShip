@@ -6,6 +6,7 @@ Created on Oct 18, 2014
 '''
 Keeps a record of hits
 Displays current grid
+Records all updates to the grid
 '''
 class GameGrid:
 
@@ -18,6 +19,9 @@ class GameGrid:
         
     # Updates a hit with a label
     # Valid labels = XABCDS
+    # Updates either player or AI grid
+    # (String, String, String)
+    # i.e. cell = 'a4'
     def update(self, cell, label, gridType):
         r = cell[0]
         row = self.rowkeys.index(r)
@@ -27,8 +31,8 @@ class GameGrid:
         else:
             self.aiGrid[row][col] = label
         
-    # Displays grid
-    def display(self):
+    # Displays AI and Player grids
+    def displayDual(self):
         i = 0
         print "        AI Ships     ",
         print "         Your Ships    "
@@ -49,5 +53,17 @@ class GameGrid:
             i+=1
         print ""
 
-                
+    # Displays Player grid
+    def displayPlayer(self):
+        i = 0
+        print""
+        print "   Place Your Ships"
+        print "  0 1 2 3 4 5 6 7 8 9"
+        for row in self.playerGrid:
+            print self.rowkeys[i],
+            i+=1
+            for col in row:
+                print col,
+            print ""
+        print ""            
     
