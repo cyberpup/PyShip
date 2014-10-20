@@ -9,25 +9,23 @@ Displays current grid
 '''
 class GameGrid:
 
-    rowkeys = "abcdefghij"
+    rowkeys = "ABCDEFGHIJ"
     
+    # Initializes Grids for AI and Human Players
     def __init__(self):
         self.aiGrid = [["O" for col in range(10)] for row in range(10)]
         self.playerGrid = [["O" for col in range(10)] for row in range(10)]
         
     # Updates a hit with a label
-    def updateAI(self, cell, label):
+    # Valid labels = XABCDS
+    def update(self, cell, label, gridType):
         r = cell[0]
         row = self.rowkeys.index(r)
         col = int(cell[1])
-        self.aiGrid[row][col] = label
-        
-    # Updates a hit with a label
-    def updatePlayer(self, cell, label):
-        r = cell[0]
-        row = self.rowkeys.index(r)
-        col = int(cell[1])
-        self.playerGrid[row][col] = label
+        if gridType == "player":
+            self.playerGrid[row][col] = label
+        else:
+            self.aiGrid[row][col] = label
         
     # Displays grid
     def display(self):
