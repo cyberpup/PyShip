@@ -19,6 +19,21 @@ def isValidGuess(guess):
     else:
         return False
 
+def update(guess, opponent):
+    
+    result, label, shipKey = game.fire(guess)
+    if result:
+        if label == "X":
+            grid.update(guess, label, opponent)
+            print("hit!")
+        else:
+            for ship in game.ships[shipKey]:
+                grid.update(ship, label, opponent)
+            print("Ship sunk!")
+    else:
+        print("Miss!")  
+    print""
+
 
 print ("""\
 
@@ -60,38 +75,24 @@ Initialize AI View
 '''
 ai = AI_View(game)
 
-# Game Loop
+# Begin Game
 while True:
     
-    # Begin Game
-    
-    grid.displayDual()
-    
-    
-    # Player goes first
+    # Display Game Grid
+    grid.displayDual()  
+
+    # Player's Turn
     guess = player.guess()
     
     # Check if guess is valid
     while not isValidGuess(guess):
         guess = raw_input("Please guess again: ")
         print""
-        
-    
-    '''
-    result, label, shipKey = game.fire(guess)
 
-    if result:
-        if label == "X":
-            grid.updateAI(guess, label)
-            print("hit!")
-        else:
-            # Find a way to update all labels in grid
-            for ship in game.ships[shipKey]:
-                grid.updateAI(ship, label)
-            print("Ship sunk!")
-    else:
-        print("Miss!")
-        
-    print""
+    update(guess, "ai")
     
-    '''
+    # AI's Turn
+    guess = ai.guess()
+    update(guess, "player")
+
+
