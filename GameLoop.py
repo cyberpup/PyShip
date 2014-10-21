@@ -52,13 +52,13 @@ Initialize Human View
 
 Helps Player place ships
 '''
-player = HumanView()
+player = HumanView(game, grid)
 
 '''
 Initialize AI View
 
 '''
-ai = AI_View()
+ai = AI_View(game)
 
 # Game Loop
 while True:
@@ -66,13 +66,18 @@ while True:
     # Begin Game
     
     grid.displayDual()
-    guess = raw_input("Your guess: ")
-    print""
     
+    
+    # Player goes first
+    guess = player.guess()
+    
+    # Check if guess is valid
     while not isValidGuess(guess):
         guess = raw_input("Please guess again: ")
         print""
+        
     
+    '''
     result, label, shipKey = game.fire(guess)
 
     if result:
@@ -89,4 +94,4 @@ while True:
         
     print""
     
-    
+    '''

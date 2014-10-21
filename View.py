@@ -4,8 +4,6 @@ Created on Oct 20, 2014
 @author: Ray "Cyberpup" Tong
 '''
 
-from GameLogic import GameLogic
-from GameGrid import GameGrid
 
 class View:
     
@@ -13,8 +11,6 @@ class View:
     colKeys = "0123456789"
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     tempSet = set()
-    logic = GameLogic()
-    grid = GameGrid()
     
     def __init__(self):
         pass
@@ -59,8 +55,9 @@ class View:
             return False
         return True
 
+    # (String, GameLogic)
     # Returns False if no collisions detected
-    def requestCollisionDetect(self, user):
+    def requestCollisionDetect(self, user, logic):
         # pass each cell in tempSet of current ship to GameLogic
         # GameLogic will return True if collision occurs
         for cell in self.tempSet:

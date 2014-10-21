@@ -12,9 +12,12 @@ class AI_View(View):
     directionKey = ['H','V']
     guessLog = set()
     
-    def __init__(self):
+    def __init__(self, logic):
+        
+        self.logic = logic
         self.shipKeys = self.shipSizes.keys() # PyListObject
         self.__setup(self.shipKeys)
+        
 
     def __setup(self, shipKeys):
         
@@ -28,7 +31,7 @@ class AI_View(View):
 
                 if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                     # No Collision
-                    if not self.requestCollisionDetect("AI"):
+                    if not self.requestCollisionDetect("AI", self.logic):
   
                         # remove element from shipkeys
                         shipKeys.remove(shipType)
@@ -36,10 +39,13 @@ class AI_View(View):
                         # store ship in Game Logic
                         self.logic.addShip(self.tempSet.copy(), shipType, 'AI')
                         
+                        '''
+                        DEBUG
                         # update display
                         for cell in self.tempSet:
                             label = shipType[0]
                             self.grid.update(cell, label, "AI") 
+                        '''
                         self.tempSet.clear()
                     # Collision
                     else:
@@ -81,14 +87,14 @@ class AI_View(View):
         
         return seed
         
-        
+'''       
     def test(self):
         self.grid.display("AI")
 
-'''
-Test
-'''
-AI_View().test()
 
+Test
+
+AI_View().test()
+'''
 
 

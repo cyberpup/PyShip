@@ -21,10 +21,11 @@ class HumanView(View):
     # Inflate HumanView object
     # Initiate Setup mode
     # Exits Setup after all ships are placed
-    def __init__(self):
-         
+    def __init__(self, logic, grid):
+        
+        self.logic = logic
+        self.grid = grid  
         self.shipKeys = self.shipSizes.keys() # PyListObject
-        #self.grid = GameGrid()
         self.__setup(self.shipKeys)
 
     def __displayMenu(self, shipKeys):
@@ -71,7 +72,7 @@ class HumanView(View):
 
             if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                 # No Collision
-                if not self.requestCollisionDetect("player"):
+                if not self.requestCollisionDetect("player", self.logic):
                     # remove element from shipkeys
                     shipKeys.remove(shipType)
    
@@ -106,5 +107,6 @@ class HumanView(View):
 
 '''
 Test
-'''
+
 HumanView()   
+'''

@@ -34,7 +34,7 @@ class GameLogic:
     rowKeys = "abcdefghij"
     colKeys = "0123456789"
     playerShips = {} # Player
-    ships = {}       # AI
+    aiShips = {}       # AI
     score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
 
@@ -49,7 +49,7 @@ class GameLogic:
     def printAIShips(self):
         
         grid = GameGrid()
-        for shipKey, shipSet in self.ships.items():
+        for shipKey, shipSet in self.aiShips.items():
             for cell in shipSet:
                 grid.updateAI(cell, self.reportShip(shipKey))  
         grid.display()
@@ -72,7 +72,7 @@ class GameLogic:
     # A miss returns False     
     def fire(self,guess):
         
-        for shipKey, ship in self.ships.items():
+        for shipKey, ship in self.aiShips.items():
             # Hit
             if guess in ship: 
                 label, shipKey = self.keepScore(shipKey) 
@@ -101,7 +101,7 @@ class GameLogic:
         # AI Request
         else:
             # Check collisions with Human ships already placed
-            for shipKey, shipSet in self.ships.items():
+            for shipKey, shipSet in self.aiShips.items():
                 if cell in shipSet:
                     return True
                 else:
@@ -121,7 +121,7 @@ class GameLogic:
         if user == 'player':
             self.playerShips[label] = ship
         else:
-            self.ships[label] = ship
+            self.aiShips[label] = ship
         
     def getPlayerShips(self):
         return self.playerShips
