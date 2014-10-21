@@ -7,16 +7,19 @@ Created on Oct 20, 2014
 from View import View
 from random import randint
 
+
 class AI_View(View):
     
     directionKey = ['H','V']
     guessLog = set()
     
-    def __init__(self, logic):
-        
+    def __init__(self, logic, grid):
+    
+        self.grid = grid
         self.logic = logic
         self.shipKeys = self.shipSizes.keys() # PyListObject
         self.__setup(self.shipKeys)
+        
         
 
     def __setup(self, shipKeys):
@@ -40,13 +43,17 @@ class AI_View(View):
                         self.logic.addShip(self.tempSet.copy(), shipType, 'AI')
                         
                         '''
-                        DEBUG
+                        '''
+                        #DEBUG
                         # update display
                         for cell in self.tempSet:
                             label = shipType[0]
                             self.grid.update(cell, label, "AI") 
-                        '''
+                        
                         self.tempSet.clear()
+                        '''
+                        '''
+                        
                     # Collision
                     else:
                         continue

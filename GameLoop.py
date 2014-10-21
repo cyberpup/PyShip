@@ -9,7 +9,7 @@ from HumanView import HumanView
 from AI_View import AI_View
 
 def isValidGuess(guess): 
-    row = "abcdefghij"
+    row = "ABCDEFGHIJ"
     col = "0123456789"
     
     if not len(guess)==2:
@@ -21,17 +21,34 @@ def isValidGuess(guess):
 
 def update(guess, opponent):
     
-    result, label, shipKey = game.fire(guess)
-    if result:
-        if label == "X":
-            grid.update(guess, label, opponent)
-            print("hit!")
+    result, label, shipKey = game.fire(guess, opponent)
+    
+    # opponent = AI
+    if opponent == 'AI':
+        print "Results:"
+        if result:
+            if label == "X":
+                grid.update(guess, label, opponent)
+                print("You hit one of the AI's ship!"),
+            else:
+                for ship in game.aiShips[shipKey]:
+                    grid.update(ship, label, opponent)
+                print("You sunk an AI ship!"),
         else:
-            for ship in game.ships[shipKey]:
-                grid.update(ship, label, opponent)
-            print("Ship sunk!")
+            print("You missed!"),
+    # opponent = player
     else:
-        print("Miss!")  
+        if result:
+            if label == "X":
+                grid.update(guess, label, opponent)
+                print("AI hit one of your ships!")
+            else:
+                for ship in game.playerShips[shipKey]:
+                    grid.update(ship, label, opponent)
+                print("AI sunk your ship!")
+        else:
+            print("AI missed!")
+        
     print""
 
 
@@ -68,12 +85,16 @@ Initialize Human View
 Helps Player place ships
 '''
 player = HumanView(game, grid)
+# DEBUGprint grid.playerGrid  
+# DEBUGprint game.playerShips 
 
 '''
 Initialize AI View
 
 '''
-ai = AI_View(game)
+ai = AI_View(game, grid)
+# DEBUGprint grid.aiGrid  
+# DEBUGprint game.aiShips 
 
 # Begin Game
 while True:
@@ -83,16 +104,20 @@ while True:
 
     # Player's Turn
     guess = player.guess()
+    update(guess, "AI")
     
-    # Check if guess is valid
-    while not isValidGuess(guess):
-        guess = raw_input("Please guess again: ")
-        print""
-
-    update(guess, "ai")
+    # Gave Over?
+    #DEBUGprint "ai ships:",game.getNumOfShips('AI') 
+    if game.getNumOfShips('AI') == 0:
+        print("Game over. You win!")
+        break
     
     # AI's Turn
     guess = ai.guess()
     update(guess, "player")
-
-
+    
+    # Gave Over?
+    #DEBUGprint "player ships:",game.getNumOfShips('player') 
+    if game.getNumOfShips('player') == 0:
+        print("Game over. You lose!")
+        break

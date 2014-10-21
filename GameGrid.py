@@ -7,6 +7,10 @@ Created on Oct 18, 2014
 Keeps a record of hits
 Displays current grid
 Records all updates to the grid
+
+NOTE: GameGrid only displays what you update to it
+      GameLogic stores ship locations
+
 '''
 class GameGrid:
 

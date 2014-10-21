@@ -16,8 +16,15 @@ Add ability to change placements
 #from GameGrid import GameGrid
 from View import View
 
+#DEBUG
+from random import randint
+
 class HumanView(View):
    
+   
+    #DEBUG (AUTOMATES SHIP ENTRIES)
+    directionKey = ['H','V']
+    
     # Inflate HumanView object
     # Initiate Setup mode
     # Exits Setup after all ships are placed
@@ -26,7 +33,68 @@ class HumanView(View):
         self.logic = logic
         self.grid = grid  
         self.shipKeys = self.shipSizes.keys() # PyListObject
-        self.__setup(self.shipKeys)
+        self.__test_setup(self.shipKeys)
+        
+    # DEBUG (AUTOMATES SHIP ENTRIES)
+    def __test_setup(self, shipKeys):
+        
+        # Loop through list of available ships
+        for shipType, shipSize in self.shipSizes.items(): 
+              
+            # Keep placing ships until all ships are placed.
+            while (len(shipKeys) > 0):
+                
+                cell, direction = self.__test_placeShip(shipSize)
+
+                if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
+                    # No Collision
+                    if not self.requestCollisionDetect("player", self.logic):
+  
+                        # remove element from shipkeys
+                        shipKeys.remove(shipType)
+    
+                        # store ship in Game Logic
+                        self.logic.addShip(self.tempSet.copy(), shipType, 'player')
+                        
+                        '''
+                        '''
+                        #DEBUG
+                        # update display
+                        for cell in self.tempSet:
+                            label = shipType[0]
+                            self.grid.update(cell, label, "player") 
+                        
+                        self.tempSet.clear()
+                    # Collision
+                    else:
+                        continue
+                
+                break
+            
+    # DEBUG
+    # Randomly places one ship 
+    # Returns True if placement is successful 
+    def __test_placeShip(self, size):
+  
+        # determine horizontal or vertical placement
+        direction = randint(0,1)
+        # restrict ship within columns or rows
+        index = randint(0, 9-size) 
+        
+        # Horizontal - only columns change
+        if (self.directionKey[direction]=='H'):                          
+            row = self.rowKeys[randint(0,9)]
+            col = self.colKeys[index]
+
+        # Vertical - only rows change   
+        else:                                          
+            row = self.rowKeys[index] 
+            col = self.colKeys[randint(0,9)]
+               
+        cell = row + col
+        return cell, self.directionKey[direction]
+
+
 
     def __displayMenu(self, shipKeys):
         
@@ -81,7 +149,7 @@ class HumanView(View):
                     # store ship in Game Logic
                     self.logic.addShip(self.tempSet.copy(), shipType, 'player')
                     
-                    # update display
+                    # update display (Map with Human ships)
                     for cell in self.tempSet:
                         label = shipType[0]
                         self.grid.update(cell, label, "player")
@@ -95,8 +163,28 @@ class HumanView(View):
         print self.logic.getPlayerShips()   
         '''
     
+    # Makes sure entry is valid
+    def isValid(self, entry): 
+        row = "ABCDEFGHIJ"
+        col = "0123456789"
+        
+        if not len(entry)==2:
+            return False
+        elif entry[0] in row and entry[1] in col:
+            return True
+        else:
+            return False
+
+    
+    
     def guess(self):
-        return raw_input("Your guess: ")
+        guess = raw_input("Your guess: ").upper()
+        # Check if player's guess is valid
+        while not self.isValid(guess):
+            guess = raw_input("Please guess again: ").upper()
+            print""
+        
+        return guess
   
           
     def __test(self, a, b='B', c='C', d1='D1', d2='D2', s1='S1', s2='S2'):

@@ -34,8 +34,9 @@ class GameLogic:
     rowKeys = "abcdefghij"
     colKeys = "0123456789"
     playerShips = {} # Player
-    aiShips = {}       # AI
-    score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
+    aiShips = {}     # AI
+    aiShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
+    playerShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
 
     # score tracks hits to ships
@@ -54,29 +55,56 @@ class GameLogic:
                 grid.updateAI(cell, self.reportShip(shipKey))  
         grid.display()
 
+    # Hit has been confirmed
     # Returns a 'X' if no ship is sunk
     # or
     # Returns first letter of ship type sunk
-    def keepScore(self, shipKey):
+    def keepScore(self, shipKey, opponent):
         
-        self.score[shipKey] = self.score[shipKey] - 1
-        if self.score[shipKey] == 0:
-            return self.reportShip(shipKey), shipKey
+        if opponent == 'player':
+            self.playerShipsRemaining[shipKey] = self.playerShipsRemaining[shipKey] - 1
+            print self.playerShipsRemaining[shipKey] # DEBUG
+            if self.playerShipsRemaining[shipKey] == 0:
+                del self.playerShipsRemaining[shipKey]
+                return self.reportShip(shipKey), shipKey
         else:
-            return 'X', None
-     
+            self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1
+            print self.aiShipsRemaining[shipKey] # DEBUG
+            if self.aiShipsRemaining[shipKey] == 0:
+                del self.aiShipsRemaining[shipKey]
+                return self.reportShip(shipKey), shipKey
     
+        return 'X', None
+     
+    def getNumOfShips(self, playerType):
+
+        if playerType == 'player':
+            total = len(self.playerShipsRemaining)
+        else:
+            total = len(self.aiShipsRemaining)
+               
+        return total
+                
      
     # Given player's guess
     # A hit returns True and updates score
     # A miss returns False     
-    def fire(self,guess):
+    def fire(self, guess, opponent):
         
-        for shipKey, ship in self.aiShips.items():
-            # Hit
-            if guess in ship: 
-                label, shipKey = self.keepScore(shipKey) 
-                return True, label, shipKey
+        if opponent == 'player':
+            for shipKey, ship in self.playerShips.items():
+                # Hit
+                if guess in ship: 
+                    label, shipKey = self.keepScore(shipKey, opponent) 
+                    return True, label, shipKey
+     
+        else:
+            for shipKey, ship in self.aiShips.items():
+                # Hit
+                if guess in ship: 
+                    label, shipKey = self.keepScore(shipKey, opponent) 
+                    return True, label, shipKey
+            
         # Miss
         return False, None, None
 
@@ -123,8 +151,6 @@ class GameLogic:
         else:
             self.aiShips[label] = ship
         
-    def getPlayerShips(self):
-        return self.playerShips
         
 '''
 # Test isCellTaken
