@@ -1,0 +1,94 @@
+'''
+Created on Oct 20, 2014
+
+@author: Ray "Cyberpup" Tong
+'''
+
+from View import View
+from random import randint
+
+class AI_View(View):
+    
+    directionKey = ['H','V']
+    guessLog = set()
+    
+    def __init__(self):
+        self.shipKeys = self.shipSizes.keys() # PyListObject
+        self.__setup(self.shipKeys)
+
+    def __setup(self, shipKeys):
+        
+        # Loop through list of available ships
+        for shipType, shipSize in self.shipSizes.items(): 
+              
+            # Keep placing ships until all ships are placed.
+            while (len(shipKeys) > 0):
+                
+                cell, direction = self.__placeShip(shipSize)
+
+                if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
+                    # No Collision
+                    if not self.requestCollisionDetect("AI"):
+  
+                        # remove element from shipkeys
+                        shipKeys.remove(shipType)
+    
+                        # store ship in Game Logic
+                        self.logic.addShip(self.tempSet.copy(), shipType, 'AI')
+                        
+                        # update display
+                        for cell in self.tempSet:
+                            label = shipType[0]
+                            self.grid.update(cell, label, "AI") 
+                        self.tempSet.clear()
+                    # Collision
+                    else:
+                        continue
+                
+                break
+    # Randomly places one ship 
+    # Returns True if placement is successful 
+    def __placeShip(self, size):
+  
+        # determine horizontal or vertical placement
+        direction = randint(0,1)
+        # restrict ship within columns or rows
+        index = randint(0, 9-size) 
+        
+        # Horizontal - only columns change
+        if (self.directionKey[direction]=='H'):                          
+            row = self.rowKeys[randint(0,9)]
+            col = self.colKeys[index]
+
+        # Vertical - only rows change   
+        else:                                          
+            row = self.rowKeys[index] 
+            col = self.colKeys[randint(0,9)]
+               
+        cell = row + col
+        return cell, self.directionKey[direction]
+
+
+    # AI Code
+    def guess(self):
+        # seed = random guess
+        row = self.rowKeys[randint(0,9)]
+        col = self.colKeys[randint(0,9)]
+        seed = row + col
+        # save guess
+        if not seed in self.guessLog:
+            self.guessLog.add(seed)
+        
+        return seed
+        
+        
+    def test(self):
+        self.grid.display("AI")
+
+'''
+Test
+'''
+AI_View().test()
+
+
+

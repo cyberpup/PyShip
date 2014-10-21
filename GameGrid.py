@@ -53,17 +53,25 @@ class GameGrid:
             i+=1
         print ""
 
-    # Displays Player grid
-    def displayPlayer(self):
+    # Displays a single user grid
+    def display(self, user):
         i = 0
         print""
         print "   Place Your Ships"
         print "  0 1 2 3 4 5 6 7 8 9"
-        for row in self.playerGrid:
-            print self.rowkeys[i],
-            i+=1
-            for col in row:
-                print col,
-            print ""
+        if user == 'player':
+            for row in self.playerGrid:
+                print self.rowkeys[i],
+                i+=1
+                for col in row:
+                    print col,
+                print ""
+        else:
+            for row in self.aiGrid:
+                print self.rowkeys[i],
+                i+=1
+                for col in row:
+                    print col,
+                print ""
         print ""            
     

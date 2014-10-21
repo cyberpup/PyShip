@@ -6,6 +6,7 @@ Created on Oct 17, 2014
 from GameLogic import GameLogic
 from GameGrid import GameGrid
 from HumanView import HumanView
+from AI_View import AI_View
 
 def isValidGuess(guess): 
     row = "abcdefghij"
@@ -46,7 +47,6 @@ Displays Game Grid
 '''
 grid = GameGrid()
 
-
 '''
 Initialize Human View
 
@@ -54,18 +54,14 @@ Helps Player place ships
 '''
 player = HumanView()
 
-# Display Setup Grid
-# Player places ships on grid
-  
-while True:
-    player.displayMenu(shipKeys)
-    player.
+'''
+Initialize AI View
 
-
+'''
+ai = AI_View()
 
 # Game Loop
 while True:
-    
     
     # Begin Game
     
