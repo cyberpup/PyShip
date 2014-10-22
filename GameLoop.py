@@ -20,7 +20,15 @@ def isValidGuess(guess):
         return False
 
 
-# Updates the display for either player type
+# Updates the display for either human type
+
+'''
+Given a player's guess and the opponent fired upon:
+1. Updates human and AI grids
+2. Prints results
+
+'''
+
 def update(guess, opponent):
     
     result, label, shipKey = game.fire(guess, opponent)
@@ -38,7 +46,7 @@ def update(guess, opponent):
                 print("You sunk an AI ship!"),
         else:
             print("You missed!"),
-    # opponent = player
+    # opponent = human
     else:
         if result:
             
@@ -88,9 +96,9 @@ grid = GameGrid()
 '''
 Initialize Human View
 
-Helps Player place ships
+Helps Human place ships
 '''
-player = HumanView(game, grid)
+human = HumanView(game, grid)
 # DEBUGprint grid.playerGrid  
 # DEBUGprint game.playerShips 
 
@@ -111,8 +119,8 @@ while True:
     # Display Game Grid
     grid.displayDual()  
 
-    # Player's Turn
-    guess = player.guess()
+    # human's Turn
+    guess = human.guess()
     update(guess, "AI")
     
     # Gave Over?
@@ -123,11 +131,11 @@ while True:
     
     # AI's Turn
     guess = ai.guess()
-    update(guess, "player")
+    update(guess, "human")
     
     # Gave Over?
-    #DEBUGprint "player ships:",game.getNumOfShips('player') 
-    if game.getNumOfShips('player') == 0:
+    #DEBUGprint "human ships:",game.getNumOfShips('human') 
+    if game.getNumOfShips('human') == 0:
         print("Game over. You lose!")
         break
 

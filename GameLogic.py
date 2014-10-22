@@ -62,9 +62,9 @@ class GameLogic:
     # Returns first letter of ship type sunk
     def keepScore(self, shipKey, opponent):
         
-        if opponent == 'player':
+        if opponent == 'human':
             
-            # DEBUGprint "GameLogic keepScore: opponent==player"
+            # DEBUGprint "GameLogic keepScore: opponent==human"
             # DEBUGprint self.playerShipsRemaining, shipKey 
             # DEBUGprint self.playerShipsRemaining[shipKey] 
  
@@ -89,7 +89,7 @@ class GameLogic:
      
     def getNumOfShips(self, playerType):
 
-        if playerType == 'player':
+        if playerType == 'human':
             total = len(self.playerShipsRemaining)
         else:
             total = len(self.aiShipsRemaining)
@@ -102,7 +102,7 @@ class GameLogic:
     # A miss returns False     
     def fire(self, guess, opponent):
         
-        if opponent == 'player':
+        if opponent == 'human':
             for shipKey, ship in self.playerShips.items():
                 # Hit
                 if guess in ship: 
@@ -112,7 +112,7 @@ class GameLogic:
      
         # AI opponent (stores previous hits in a log)
         else:
-            # Make sure player hasn't already guessed this hit
+            # Make sure human hasn't already guessed this hit
             while guess in self.pastPlayerHits:
                 guess = raw_input("Guess again: ").upper()
             
@@ -131,7 +131,7 @@ class GameLogic:
     def isCollision(self, cell, user):
         
         # Human Request
-        if user == 'player':
+        if user == 'human':
 
             #DEBUGprint "Player ships ", self.playerShips 
             
@@ -164,7 +164,7 @@ class GameLogic:
             return shipKey
         
     def addShip(self, ship, label, user):
-        if user == 'player':
+        if user == 'human':
             self.playerShips[label] = ship
         else:
             self.aiShips[label] = ship

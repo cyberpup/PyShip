@@ -47,20 +47,20 @@ class HumanView(View):
 
                 if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                     # No Collision
-                    if not self.requestCollisionDetect("player", self.logic):
+                    if not self.requestCollisionDetect("human", self.logic):
   
                         # remove element from shipkeys
                         shipKeys.remove(shipType)
     
                         # store ship in Game Logic
-                        self.logic.addShip(self.tempSet.copy(), shipType, 'player')
+                        self.logic.addShip(self.tempSet.copy(), shipType, 'human')
                         
            
                         #DEBUG
                         # update display
                         for cell in self.tempSet:
                             label = shipType[0]
-                            self.grid.update(cell, label, "player") 
+                            self.grid.update(cell, label, "human") 
                         
                         self.tempSet.clear()
                     # Collision
@@ -133,7 +133,7 @@ class HumanView(View):
             direction = "Invalid"
             cell = "Invalid"
             
-            self.grid.display("player")
+            self.grid.display("human")
             self.__displayMenu(self.shipKeys)
             print ""
             
@@ -152,7 +152,7 @@ class HumanView(View):
             
             if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                 # No Collision
-                if not self.requestCollisionDetect("player", self.logic):
+                if not self.requestCollisionDetect("human", self.logic):
                     # remove element from shipkeys
                     # counts number of unplaced ships left
                     shipKeys.remove(shipType)
@@ -160,12 +160,12 @@ class HumanView(View):
                     # DEBUG print "Adding this to logic ", self.tempSet 
                     
                     # store ship in Game Logic
-                    self.logic.addShip(self.tempSet.copy(), shipType, 'player')
+                    self.logic.addShip(self.tempSet.copy(), shipType, 'human')
                     
                     # update display (Map with Human ships)
                     for cell in self.tempSet:
                         label = shipType[0]
-                        self.grid.update(cell, label, "player")
+                        self.grid.update(cell, label, "human")
                     self.tempSet.clear()
                         
                 # Collision
@@ -215,7 +215,7 @@ class HumanView(View):
   
           
     def __test(self, a, b='B', c='C', d1='D1', d2='D2', s1='S1', s2='S2'):
-        self.grid.display('player')
+        self.grid.display('human')
         shipKeys = {a, b, c, d1, d2, s1, s2}
         self.displayMenu(shipKeys)
         self.askPlayer(shipKeys)
