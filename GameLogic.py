@@ -64,8 +64,8 @@ class GameLogic:
         
         if opponent == 'player':
             
-            print "GameLogic keepScore: opponent==player"
-            print self.playerShipsRemaining, shipKey # DEBUG
+            # DEBUGprint "GameLogic keepScore: opponent==player"
+            # DEBUGprint self.playerShipsRemaining, shipKey 
             # DEBUGprint self.playerShipsRemaining[shipKey] 
  
             self.playerShipsRemaining[shipKey] = self.playerShipsRemaining[shipKey] - 1
@@ -75,8 +75,8 @@ class GameLogic:
                 return self.reportShip(shipKey), shipKey
         else:
             
-            print "GameLogic keepScore: opponent==AI"
-            print self.aiShipsRemaining, shipKey # DEBUG
+            # DEBUGprint "GameLogic keepScore: opponent==AI"
+            # DEBUGprint self.aiShipsRemaining, shipKey 
             # DEBUGprint self.aiShipsRemaining[shipKey] 
             
             self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1

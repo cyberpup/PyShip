@@ -106,7 +106,6 @@ ai = AI_View(game, grid)
 print ""
 print "Begin!"
 
-
 while True:
     
     # Display Game Grid
@@ -132,4 +131,5 @@ while True:
         print("Game over. You lose!")
         break
 
+# Display Final Grids
 grid.displayDual()
