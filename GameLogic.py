@@ -27,12 +27,11 @@ Creates ships
 
 '''
 
-from GameGrid import GameGrid # DEBUG
+# DEBUGfrom GameGrid import GameGrid 
 
 class GameLogic:
-    
-    rowKeys = "abcdefghij"
-    colKeys = "0123456789"
+
+    pastPlayerHits = set()
     playerShips = {} # Player
     aiShips = {}     # AI
     aiShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
@@ -44,7 +43,8 @@ class GameLogic:
     # player wins when all entries are zero
     def __init__(self):
         pass
-        
+       
+    ''' 
     # DEBUG
     # Prints all ships on game grid
     def printAIShips(self):
@@ -54,6 +54,7 @@ class GameLogic:
             for cell in shipSet:
                 grid.updateAI(cell, self.reportShip(shipKey))  
         grid.display()
+    '''
 
     # Hit has been confirmed
     # Returns a 'X' if no ship is sunk
@@ -62,14 +63,24 @@ class GameLogic:
     def keepScore(self, shipKey, opponent):
         
         if opponent == 'player':
+            
+            print "GameLogic keepScore: opponent==player"
+            print self.playerShipsRemaining, shipKey # DEBUG
+            # DEBUGprint self.playerShipsRemaining[shipKey] 
+ 
             self.playerShipsRemaining[shipKey] = self.playerShipsRemaining[shipKey] - 1
-            print self.playerShipsRemaining[shipKey] # DEBUG
+            
             if self.playerShipsRemaining[shipKey] == 0:
                 del self.playerShipsRemaining[shipKey]
                 return self.reportShip(shipKey), shipKey
         else:
+            
+            print "GameLogic keepScore: opponent==AI"
+            print self.aiShipsRemaining, shipKey # DEBUG
+            # DEBUGprint self.aiShipsRemaining[shipKey] 
+            
             self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1
-            print self.aiShipsRemaining[shipKey] # DEBUG
+            
             if self.aiShipsRemaining[shipKey] == 0:
                 del self.aiShipsRemaining[shipKey]
                 return self.reportShip(shipKey), shipKey
@@ -95,16 +106,23 @@ class GameLogic:
             for shipKey, ship in self.playerShips.items():
                 # Hit
                 if guess in ship: 
+                    
                     label, shipKey = self.keepScore(shipKey, opponent) 
                     return True, label, shipKey
      
+        # AI opponent (stores previous hits in a log)
         else:
+            # Make sure player hasn't already guessed this hit
+            while guess in self.pastPlayerHits:
+                guess = raw_input("Guess again: ").upper()
+            
             for shipKey, ship in self.aiShips.items():
                 # Hit
-                if guess in ship: 
+                if guess in ship:
+                    self.pastPlayerHits.add(guess) # Add guess to hits set 
+                    
                     label, shipKey = self.keepScore(shipKey, opponent) 
-                    return True, label, shipKey
-            
+                    return True, label, shipKey 
         # Miss
         return False, None, None
 
@@ -121,7 +139,7 @@ class GameLogic:
             for shipKey, shipSet in self.playerShips.items():
                 if cell in shipSet:
                     
-                    #DEBUG print "COLLISION!" 
+                    #DEBUGprint "COLLISION!" 
                     
                     return True
                 else:

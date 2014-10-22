@@ -20,11 +20,7 @@ from View import View
 from random import randint
 
 class HumanView(View):
-   
-   
-    #DEBUG (AUTOMATES SHIP ENTRIES)
-    directionKey = ['H','V']
-    
+
     # Inflate HumanView object
     # Initiate Setup mode
     # Exits Setup after all ships are placed
@@ -34,7 +30,10 @@ class HumanView(View):
         self.grid = grid  
         self.shipKeys = self.shipSizes.keys() # PyListObject
         self.__test_setup(self.shipKeys)
-        
+ 
+    #DEBUG (AUTOMATES SHIP ENTRIES)
+    directionKey = ['H','V']
+    
     # DEBUG (AUTOMATES SHIP ENTRIES)
     def __test_setup(self, shipKeys):
         
@@ -56,8 +55,7 @@ class HumanView(View):
                         # store ship in Game Logic
                         self.logic.addShip(self.tempSet.copy(), shipType, 'player')
                         
-                        '''
-                        '''
+           
                         #DEBUG
                         # update display
                         for cell in self.tempSet:
@@ -70,7 +68,8 @@ class HumanView(View):
                         continue
                 
                 break
-            
+       
+         
     # DEBUG
     # Randomly places one ship 
     # Returns True if placement is successful 
@@ -124,24 +123,38 @@ class HumanView(View):
     # ADD CHECK FOR VALID INPUTS
     def __setup(self, shipKeys):
 
+        
+
         # Keep placing ships until all ships are placed.
         while (len(shipKeys) > 0):
+            
+            # Initialize variables stop infinite loop
+            shipType = "Invalid"
+            direction = "Invalid"
+            cell = "Invalid"
             
             self.grid.display("player")
             self.__displayMenu(self.shipKeys)
             print ""
-            shipType = raw_input("Choose ship key: ").upper()
-            direction = raw_input("Place ship horizontally or vertically (H/V): ").upper()
             
-            if direction == 'H':
-                cell = raw_input("Choose leftmost end of ship (i.e. 'A4'): ").upper()
-            else:
-                cell = raw_input("Choose Topmost end of ship (i.e. 'A4'): ").upper()
-
+            while not self.validShipType(shipType):
+                shipType = raw_input("Choose ship key: ").upper()
+                
+            while not self.validDirection(direction):
+                direction = raw_input("Place ship horizontally or vertically (H/V): ").upper()
+            
+            while not self.isValid(cell):
+                if direction == 'H':
+                    cell = raw_input("Choose leftmost end of ship (i.e. 'A4'): ").upper()
+                else:
+                    cell = raw_input("Choose Topmost end of ship (i.e. 'A4'): ").upper()
+                
+            
             if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                 # No Collision
                 if not self.requestCollisionDetect("player", self.logic):
                     # remove element from shipkeys
+                    # counts number of unplaced ships left
                     shipKeys.remove(shipType)
    
                     # DEBUG print "Adding this to logic ", self.tempSet 
@@ -162,9 +175,25 @@ class HumanView(View):
         DEBUG
         print self.logic.getPlayerShips()   
         '''
+    # Validate Direction
+    def validDirection(self, direction):
+        
+        if direction[0] == 'H' or direction[0] == 'V':
+            return True
+        else:
+            return False
+        
+    # Validate Ship Type
+    def validShipType(self, shipType):
+        
+        if shipType in self.shipKeys:
+            return True
+        else:
+            return False
     
     # Makes sure entry is valid
     def isValid(self, entry): 
+
         row = "ABCDEFGHIJ"
         col = "0123456789"
         
@@ -174,8 +203,6 @@ class HumanView(View):
             return True
         else:
             return False
-
-    
     
     def guess(self):
         guess = raw_input("Your guess: ").upper()

@@ -37,6 +37,7 @@ class AI_View(View):
                     if not self.requestCollisionDetect("AI", self.logic):
   
                         # remove element from shipkeys
+                        # counts number of unplaced ships left
                         shipKeys.remove(shipType)
     
                         # store ship in Game Logic
@@ -44,15 +45,14 @@ class AI_View(View):
                         
                         '''
                         '''
-                        #DEBUG
+                        #DEBUG (Displays AI Ships)
                         # update display
                         for cell in self.tempSet:
                             label = shipType[0]
                             self.grid.update(cell, label, "AI") 
                         
                         self.tempSet.clear()
-                        '''
-                        '''
+
                         
                     # Collision
                     else:
@@ -85,14 +85,17 @@ class AI_View(View):
     # AI Code
     def guess(self):
         # seed = random guess
-        row = self.rowKeys[randint(0,9)]
-        col = self.colKeys[randint(0,9)]
-        seed = row + col
-        # save guess
-        if not seed in self.guessLog:
-            self.guessLog.add(seed)
-        
-        return seed
+        while True:
+            
+            row = self.rowKeys[randint(0,9)]
+            col = self.colKeys[randint(0,9)]
+            guess = row + col
+            if not guess in self.guessLog:
+                
+                self.guessLog.add(guess)
+                break 
+            
+        return guess
         
 '''       
     def test(self):

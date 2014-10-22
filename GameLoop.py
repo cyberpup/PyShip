@@ -19,6 +19,8 @@ def isValidGuess(guess):
     else:
         return False
 
+
+# Updates the display for either player type
 def update(guess, opponent):
     
     result, label, shipKey = game.fire(guess, opponent)
@@ -31,20 +33,24 @@ def update(guess, opponent):
                 grid.update(guess, label, opponent)
                 print("You hit one of the AI's ship!"),
             else:
-                for ship in game.aiShips[shipKey]:
-                    grid.update(ship, label, opponent)
+                for cell in game.aiShips[shipKey]:
+                    grid.update(cell, label, opponent)
                 print("You sunk an AI ship!"),
         else:
             print("You missed!"),
     # opponent = player
     else:
         if result:
+            
             if label == "X":
                 grid.update(guess, label, opponent)
                 print("AI hit one of your ships!")
             else:
-                for ship in game.playerShips[shipKey]:
-                    grid.update(ship, label, opponent)
+                label = "O" # return to ocean label
+                grid.update(guess, label, opponent)
+                
+                for cell in game.playerShips[shipKey]:
+                    grid.update(cell, label, opponent)
                 print("AI sunk your ship!")
         else:
             print("AI missed!")
@@ -97,6 +103,10 @@ ai = AI_View(game, grid)
 # DEBUGprint game.aiShips 
 
 # Begin Game
+print ""
+print "Begin!"
+
+
 while True:
     
     # Display Game Grid
@@ -121,3 +131,5 @@ while True:
     if game.getNumOfShips('player') == 0:
         print("Game over. You lose!")
         break
+
+grid.displayDual()
