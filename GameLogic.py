@@ -32,8 +32,8 @@ Creates ships
 class GameLogic:
 
     pastPlayerHits = set()
-    playerShips = {} # Player
-    aiShips = {}     # AI
+    playerShips = {} 
+    aiShips = {}     
     aiShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     playerShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
@@ -62,7 +62,7 @@ class GameLogic:
     # Returns first letter of ship type sunk
     def keepScore(self, shipKey, opponent):
         
-        if opponent == 'player':
+        if opponent == 'human':
             
             # DEBUGprint "GameLogic keepScore: opponent==player"
             # DEBUGprint self.playerShipsRemaining, shipKey 
@@ -87,22 +87,26 @@ class GameLogic:
     
         return 'X', None
      
-    def getNumOfShips(self, playerType):
+    def getNumOfShips(self, player):
 
-        if playerType == 'player':
+        if player == 'human':
             total = len(self.playerShipsRemaining)
         else:
             total = len(self.aiShipsRemaining)
                
         return total
                 
-     
-    # Given player's guess
-    # A hit returns True and updates score
-    # A miss returns False     
-    def fire(self, guess, opponent):
+    ''' 
+    Given player's guess and opponent fired upon  
+    Returns True and updates score
+    Returns False, no label, no shipKey if it's a miss 
+    
+    '''   
+    def fire(self, guess, opponent): # guess = {'A0','A1',...'J8','J9'} opponent = {'human', 'AI'}
         
-        if opponent == 'player':
+        # Process shot fired by human player
+        if opponent == 'human':
+            
             for shipKey, ship in self.playerShips.items():
                 # Hit
                 if guess in ship: 
@@ -110,16 +114,16 @@ class GameLogic:
                     label, shipKey = self.keepScore(shipKey, opponent) 
                     return True, label, shipKey
      
-        # AI opponent (stores previous hits in a log)
+        # Process shot fired by AI human
         else:
-            # Make sure player hasn't already guessed this hit
-            while guess in self.pastPlayerHits:
+            
+            while guess in self.pastPlayerHits: # Make sure this isn't a previously successful guess
                 guess = raw_input("Guess again: ").upper()
             
             for shipKey, ship in self.aiShips.items():
                 # Hit
                 if guess in ship:
-                    self.pastPlayerHits.add(guess) # Add guess to hits set 
+                    self.pastPlayerHits.add(guess) # Keep a record of successful guesses 
                     
                     label, shipKey = self.keepScore(shipKey, opponent) 
                     return True, label, shipKey 
@@ -164,7 +168,7 @@ class GameLogic:
             return shipKey
         
     def addShip(self, ship, label, user):
-        if user == 'player':
+        if user == 'human':
             self.playerShips[label] = ship
         else:
             self.aiShips[label] = ship

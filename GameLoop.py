@@ -8,6 +8,8 @@ from GameGrid import GameGrid
 from HumanView import HumanView
 from AI_View import AI_View
 
+# Determines if guess is valid
+# Returns True if point is on the grid
 def isValidGuess(guess): 
     row = "ABCDEFGHIJ"
     col = "0123456789"
@@ -19,7 +21,9 @@ def isValidGuess(guess):
     else:
         return False
 
-
+# GameLogic returns results of the guess
+# result = hit/miss
+# label = 
 # Updates the display for either player type
 def update(guess, opponent):
     
@@ -38,7 +42,7 @@ def update(guess, opponent):
                 print("You sunk an AI ship!"),
         else:
             print("You missed!"),
-    # opponent = player
+    # opponent = human
     else:
         if result:
             
@@ -123,11 +127,11 @@ while True:
     
     # AI's Turn
     guess = ai.guess()
-    update(guess, "player")
+    update(guess, "human")
     
     # Gave Over?
-    #DEBUGprint "player ships:",game.getNumOfShips('player') 
-    if game.getNumOfShips('player') == 0:
+    #DEBUGprint "player ships:",game.getNumOfShips('human') 
+    if game.getNumOfShips('human') == 0:
         print("Game over. You lose!")
         break
 
