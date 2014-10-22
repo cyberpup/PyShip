@@ -13,7 +13,7 @@ GameLogic
 * Processes fire orders from player and AI
 
 
-Player View
+HumanView
 
 * Guides player in ship placement
 
@@ -28,7 +28,7 @@ GameGrid
 
 * Displays Player only grid for initial ship placement
 
-AI View
+AI_View
 
 * Randomly places ships
 
