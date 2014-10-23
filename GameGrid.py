@@ -31,11 +31,7 @@ class GameGrid:
         row = self.rowkeys.index(r)
         col = int(cell[1])
         if gridType == "human":
-<<<<<<< HEAD
-            self.playerGrid[row][col] = label
-=======
             self.humanGrid[row][col] = label
->>>>>>> debug
         else:
             self.aiGrid[row][col] = label
         
@@ -68,11 +64,7 @@ class GameGrid:
         print "   Place Your Ships"
         print "  0 1 2 3 4 5 6 7 8 9"
         if user == 'human':
-<<<<<<< HEAD
-            for row in self.playerGrid:
-=======
             for row in self.humanGrid:
->>>>>>> debug
                 print self.rowkeys[i],
                 i+=1
                 for col in row:

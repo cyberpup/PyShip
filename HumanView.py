@@ -147,11 +147,7 @@ class HumanView(View):
             
             if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                 # No Collision
-<<<<<<< HEAD
-                if not self.requestCollisionDetect("human", self.logic):
-=======
                 if not self.detectCollision("human", self.logic):
->>>>>>> debug
                     # remove element from shipkeys
                     # counts number of unplaced ships left
                     shipKeys.remove(shipType)
