@@ -34,7 +34,7 @@ class AI_View(View):
 
                 if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                     # No Collision
-                    if not self.requestCollisionDetect("AI", self.logic):
+                    if not self.detectCollision("AI", self.logic):
   
                         # remove element from shipkeys
                         # counts number of unplaced ships left
