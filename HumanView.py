@@ -47,20 +47,20 @@ class HumanView(View):
 
                 if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                     # No Collision
-                    if not self.requestCollisionDetect("player", self.logic):
+                    if not self.detectCollision("human", self.logic):
   
                         # remove element from shipkeys
                         shipKeys.remove(shipType)
     
                         # store ship in Game Logic
-                        self.logic.addShip(self.tempSet.copy(), shipType, 'player')
+                        self.logic.addShip(self.tempSet.copy(), shipType, 'human')
                         
            
                         #DEBUG
                         # update display
                         for cell in self.tempSet:
                             label = shipType[0]
-                            self.grid.update(cell, label, "player") 
+                            self.grid.update(cell, label, "human") 
                         
                         self.tempSet.clear()
                     # Collision
@@ -93,8 +93,6 @@ class HumanView(View):
         cell = row + col
         return cell, self.directionKey[direction]
 
-
-
     def __displayMenu(self, shipKeys):
         
         print("Key        Ship         Size")
@@ -122,9 +120,6 @@ class HumanView(View):
     # Returns set of coordinates for collision detection
     # ADD CHECK FOR VALID INPUTS
     def __setup(self, shipKeys):
-
-        
-
         # Keep placing ships until all ships are placed.
         while (len(shipKeys) > 0):
             
@@ -133,7 +128,7 @@ class HumanView(View):
             direction = "Invalid"
             cell = "Invalid"
             
-            self.grid.display("player")
+            self.grid.display("human")
             self.__displayMenu(self.shipKeys)
             print ""
             
@@ -152,7 +147,11 @@ class HumanView(View):
             
             if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
                 # No Collision
+<<<<<<< HEAD
                 if not self.requestCollisionDetect("human", self.logic):
+=======
+                if not self.detectCollision("human", self.logic):
+>>>>>>> debug
                     # remove element from shipkeys
                     # counts number of unplaced ships left
                     shipKeys.remove(shipType)
@@ -190,8 +189,12 @@ class HumanView(View):
             return True
         else:
             return False
-    
-    # Makes sure entry is valid
+
+    '''
+    Determines if human player's guess is
+    a valid point on the game grid.
+
+    '''
     def isValid(self, entry): 
 
         row = "ABCDEFGHIJ"

@@ -55,12 +55,17 @@ class View:
             return False
         return True
 
-    # (String, GameLogic)
-    # Returns False if no collisions detected
-    def requestCollisionDetect(self, user, logic):
+    '''
+    Used during ship placement phase
+    to make sure ships don't overlap
+    
+    '''
+    def detectCollision(self, user, logic):          
         # pass each cell in tempSet of current ship to GameLogic
         # GameLogic will return True if collision occurs
         for cell in self.tempSet:
             if self.logic.isCollision(cell, user): 
                 return True        
         return False
+    
+    
