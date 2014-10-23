@@ -26,14 +26,6 @@ Created on Oct 17, 2014
 
 class GameLogic:
 
-<<<<<<< HEAD
-    pastPlayerHits = set()
-    playerShips = {} 
-    aiShips = {}     
-    aiShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
-    playerShipsRemaining = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
-    shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
-=======
     prevHumanHits = set()                                 # Prevents human from entering a previous hit
     humanShips = {}                                       # Human ships coordinates (immutable)
     aiShips = {}                                          # AI ships coordinates     (immutable)
@@ -43,7 +35,6 @@ class GameLogic:
                             'D2':2, 'C':3, 'B':4, 'A':5}  # Surviving human ships
     shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2,            
                   'C':3, 'B':4, 'A':5}                    # Number of cells to each ship type
->>>>>>> debug
 
     def __init__(self):
         pass
@@ -55,75 +46,6 @@ class GameLogic:
     '''
     def keepScore(self, shipKey, opponent):                     
         
-<<<<<<< HEAD
-        if opponent == 'human':
-            
-            # DEBUGprint "GameLogic keepScore: opponent==player"
-            # DEBUGprint self.playerShipsRemaining, shipKey 
-            # DEBUGprint self.playerShipsRemaining[shipKey] 
- 
-            self.playerShipsRemaining[shipKey] = self.playerShipsRemaining[shipKey] - 1
-            
-            if self.playerShipsRemaining[shipKey] == 0:
-                del self.playerShipsRemaining[shipKey]
-                return self.reportShip(shipKey), shipKey
-        else:
-            
-            # DEBUGprint "GameLogic keepScore: opponent==AI"
-            # DEBUGprint self.aiShipsRemaining, shipKey 
-            # DEBUGprint self.aiShipsRemaining[shipKey] 
-            
-            self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1
-            
-            if self.aiShipsRemaining[shipKey] == 0:
-                del self.aiShipsRemaining[shipKey]
-                return self.reportShip(shipKey), shipKey
-    
-        return 'X', None
-     
-    def getNumOfShips(self, player):
-
-        if player == 'human':
-            total = len(self.playerShipsRemaining)
-        else:
-            total = len(self.aiShipsRemaining)
-               
-        return total
-                
-    ''' 
-    Given player's guess and opponent fired upon  
-    Returns True and updates score
-    Returns False, no label, no shipKey if it's a miss 
-    
-    '''   
-    def fire(self, guess, opponent): # guess = {'A0','A1',...'J8','J9'} opponent = {'human', 'AI'}
-        
-        # Process shot fired by human player
-        if opponent == 'human':
-            
-            for shipKey, ship in self.playerShips.items():
-                # Hit
-                if guess in ship: 
-                    
-                    label, shipKey = self.keepScore(shipKey, opponent) 
-                    return True, label, shipKey
-     
-        # Process shot fired by AI human
-        else:
-            
-            while guess in self.pastPlayerHits: # Make sure this isn't a previously successful guess
-                guess = raw_input("Guess again: ").upper()
-            
-            for shipKey, ship in self.aiShips.items():
-                # Hit
-                if guess in ship:
-                    self.pastPlayerHits.add(guess) # Keep a record of successful guesses 
-                    
-                    label, shipKey = self.keepScore(shipKey, opponent) 
-                    return True, label, shipKey 
-        # Miss
-        return False, None, None
-=======
         if opponent == 'human':                             # Record number of cells left for human ship  
             self.humanShipsRemaining[shipKey] = self.humanShipsRemaining[shipKey] - 1                               
         if self.humanShipsRemaining[shipKey] == 0:          # If cells for a ship drops to zero,
@@ -171,7 +93,6 @@ class GameLogic:
                                         shipKey, opponent)  # and update ship information
                     return True, label, shipKey             # Return hit results                                                                   
         return False, None, None                            # If miss, return miss results
->>>>>>> debug
 
     '''
     Called during ship placement phase
@@ -214,11 +135,6 @@ class GameLogic:
         else:
             return shipKey
         
-<<<<<<< HEAD
-    def addShip(self, ship, label, user):
-        if user == 'human':
-            self.playerShips[label] = ship
-=======
     '''
     Called during ship placement phase
     Depending on the player placing the ship,
@@ -230,7 +146,6 @@ class GameLogic:
     def addShip(self, ship, label, player):
         if player == 'human':
             self.humanShips[label] = ship
->>>>>>> debug
         else:
             self.aiShips[label] = ship
             
