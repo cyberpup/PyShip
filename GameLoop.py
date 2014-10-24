@@ -10,6 +10,9 @@ from GameGrid import GameGrid
 from HumanView import HumanView
 from AI_View import AI_View
 
+from random import randint # DEBUG
+
+
 '''
 Evaluates player's guess against opponent fired upon:
 1. If the opponent's ship is hit, opponent's display grid is updated
@@ -60,6 +63,42 @@ def showTitle():                                        # Title & Credits
     
     """)
 
+def testMode(games):
+    
+    human_wins, ai_wins = 0, 0
+    game = GameLogic()
+    grid = GameGrid()
+    human = HumanView(game, grid)
+    ai = AI_View(game, grid)
+    
+    for i in range(0,games):                        # games = # of autoplays
+        row = "ABCDEFGHIJ"
+        col = "0123456789"
+        pastGuesses = set()
+        guess = "dummyvalue"
+        
+        while True:                                             # Main loop
+            grid.displayDual()                                  # Display game grid  
+            while guess in pastGuesses:
+                index_r = randint(0,9)
+                index_c = randint(0,9)
+                guess = row[index_r] + col[index_c]             # Human's turn to fire 
+                pastGuesses.add(guess) 
+            print guess                          
+            shootAt(guess, "AI")                                 
+            if game.getNumOfShips('AI') == 0:                   # If human wins, game's over
+                print("Game over. You win!")                    # otherwise, continue loop
+                human_wins += 1
+                break
+            guess = ai.guess()                                  # AI's turn to fire
+            shootAt(guess, "human")                              
+            if game.getNumOfShips('human') == 0:                # If AI wins, game's over
+                print("Game over. You lose!")                   # otherwise, continue loop
+                ai_wins += 1
+                break
+    print "# of human wins: ", human_wins
+    print "# of ai wins: ", ai_wins
+
 
 showTitle()
 '''
@@ -70,12 +109,14 @@ grid = GameGrid()
 human = HumanView(game, grid)
 ai = AI_View(game, grid)
 
+testMode(100)
+
 '''
 Begin game
 '''
 print ""
 print "Begin!"
-
+'''
 while True:                                             # Main loop
     grid.displayDual()                                  # Display game grid 
     guess = human.guess()                               # Human's turn to fire
@@ -88,4 +129,7 @@ while True:                                             # Main loop
     if game.getNumOfShips('human') == 0:                # If AI wins, game's over
         print("Game over. You lose!")                   # otherwise, continue loop
         break
+'''
 grid.displayDual()                                      # Display final grids
+
+

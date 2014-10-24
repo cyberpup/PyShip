@@ -44,7 +44,6 @@ class AI_View(View):
                         self.logic.addShip(self.tempSet.copy(), shipType, 'AI')
                         
                         '''
-                        
                         #DEBUG (Displays AI Ships)
                         # update display
                         for cell in self.tempSet:
