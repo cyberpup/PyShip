@@ -48,14 +48,14 @@ class GameLogic:
         
         if opponent == 'human':                             # Record number of cells left for human ship  
             self.humanShipsRemaining[shipKey] = self.humanShipsRemaining[shipKey] - 1                               
-        if self.humanShipsRemaining[shipKey] == 0:          # If cells for a ship drops to zero,
-            del self.humanShipsRemaining[shipKey]           # delete the ship
-            return self.getShipType(shipKey), shipKey       # Return the label for a ship and its key
+            if self.humanShipsRemaining[shipKey] == 0:      # If cells for a ship drops to zero,
+                del self.humanShipsRemaining[shipKey]       # delete the ship
+                return self.shipKey[0], shipKey             # Return the label for a ship and its key
         else:                                               # Record number of cells left for AI ship 
             self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1                                      
             if self.aiShipsRemaining[shipKey] == 0:         # If cells for a ship drops to zero,
                 del self.aiShipsRemaining[shipKey]          # delete the ship
-                return self.getShipType(shipKey), shipKey   # Returns first letter of ship type sunk
+                return self.shipKey[0], shipKey             # Returns first letter of ship type sunk
         return 'X', None                                    # Returns a 'X' if no ship is sunk
     
     '''
@@ -101,9 +101,9 @@ class GameLogic:
     Ship placements are stored in this class
     
     '''
-    def isCollision(self, cell, user):
+    def isCollision(self, cell, player):
         
-        if user == 'human':                                  # Human Request
+        if player == 'human':                                # Human Request
             for shipKey, shipSet in self.humanShips.items(): # Check against human ships already placed
                 if cell in shipSet:                                  
                     return True
@@ -116,24 +116,6 @@ class GameLogic:
                 else:
                     continue
         return False
-               
-    '''
-    Returns proper ship label
-    Accounts for two destroyer IDs and
-    two submarines IDs
-    shipKey is dictionary specific
-    
-    '''       
-    def getShipType(self, shipKey):
-        
-        return shipKey[0]
-        
-        if shipKey == 'D1' or shipKey == 'D2':              
-            return "D"
-        elif shipKey == 'S1' or shipKey == 'S2':
-            return "S"
-        else:
-            return shipKey
         
     '''
     Called during ship placement phase
@@ -144,24 +126,10 @@ class GameLogic:
     
     '''
     def addShip(self, ship, label, player):
-        if player == 'human':
-            self.humanShips[label] = ship
-        else:
-            self.aiShips[label] = ship
-            
-    ''' 
-    # DEBUG
-    # Prints all ships on game grid
-    def printAIShips(self):
-        
-        grid = GameGrid()
-        for shipKey, shipSet in self.aiShips.items():
-            for cell in shipSet:
-                grid.updateAI(cell, self.getShipType(shipKey))  
-        grid.display()
-    '''
-
-        
+        if player == 'human':                               # Human Request
+            self.humanShips[label] = ship                   # Adds ship to humanShips
+        else:                                               # AI Request
+            self.aiShips[label] = ship                      # Adds ship to aiShips
             
         
   
