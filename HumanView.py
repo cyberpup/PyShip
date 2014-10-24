@@ -7,9 +7,7 @@ Created on Oct 19, 2014
 '''
 Human Player Game Interface
 
-
 Wish Features:
-Input validation
 Add ability to change placements
 '''
 

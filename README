@@ -1,14 +1,23 @@
+GameLoop
+
+* Program entry point
+
+* Test mode
+
+* Game mode
+
+* Manages player turns
+
+
 GameLogic
 
-* Keeps Score
+* Tracks ship locations
 
-* Determines Hit/Miss
+* Records hits sustained by each ship
 
-* Determines if ships are sunk
+* Knows number of ships still floating 
 
-* Knows placement of all ships
-
-* Checks if placement of ship is valid
+* Prevents ships from overlapping during placement
 
 * Processes fire orders from player and AI
 

@@ -1,5 +1,4 @@
 '''
-
 Handles salvo orders from players.
 
 Tracks:
@@ -50,12 +49,12 @@ class GameLogic:
             self.humanShipsRemaining[shipKey] = self.humanShipsRemaining[shipKey] - 1                               
             if self.humanShipsRemaining[shipKey] == 0:      # If cells for a ship drops to zero,
                 del self.humanShipsRemaining[shipKey]       # delete the ship
-                return self.shipKey[0], shipKey             # Return the label for a ship and its key
+                return shipKey[0], shipKey                  # Return 1st letter of ship type sunk and its key
         else:                                               # Record number of cells left for AI ship 
             self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1                                      
             if self.aiShipsRemaining[shipKey] == 0:         # If cells for a ship drops to zero,
                 del self.aiShipsRemaining[shipKey]          # delete the ship
-                return self.shipKey[0], shipKey             # Returns first letter of ship type sunk
+                return shipKey[0], shipKey                  # Return 1st letter of ship type sunk and its key
         return 'X', None                                    # Returns a 'X' if no ship is sunk
     
     '''
