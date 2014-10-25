@@ -1,227 +1,135 @@
 '''
+Handles salvo orders from players.
+
+Tracks:
+1. ship locations
+2. hits sustained by each ship
+3. number of ships still floating
+
+Ship Types & placement possibilities:
+
+# row = possible seeds constructing top to bottom if horizontal
+# col = possible seeds constructing left to right if vertical
+# Aircraft Carrier 1 X 5    row = {A,...,F} , col = {0,...,5} 
+# Battleship       1 X 4    row = {A,...,G} , col = {0,...,6} 
+# Cruiser          1 X 3    row = {A,...,H} , col = {0,...,7} 
+# Destroyer        2 X 2    row = {A,...,I} , col = {0,...,8} 
+# Submarine        2 X 1    row = {A,...,J} , col = {0,...,9} 
+
 Created on Oct 17, 2014
 
 @author: Ray "Cyberpup" Tong
 '''
 
-'''
-Places initial game pieces
-Handles User Input: rank+file
-
-'''
-'''
-Determines if there's a hit or a miss
-
-Was a ship sunk?
-
-Creates ships
-
-    # row = possible seeds constructing top to bottom if horizontal
-    # col = possible seeds constructing left to right if vertical
-    # Aircraft Carrier 1 X 5    row = {A,...,F} , col = {0,...,5} 
-    # Battleship       1 X 4    row = {A,...,G} , col = {0,...,6} 
-    # Cruiser          1 X 3    row = {A,...,H} , col = {0,...,7} 
-    # Destroyer        2 X 2    row = {A,...,I} , col = {0,...,8} 
-    # Submarine        2 X 1    row = {A,...,J} , col = {0,...,9} 
-
-
-'''
-from random import randint
-from GameGrid import GameGrid
+# DEBUG from GameGrid import GameGrid 
 
 class GameLogic:
-    
-    rowKeys = "abcdefghij"
-    colKeys = "0123456789"
-    playerShips = {}
-    ships = {}
-    score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
-    shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
 
-    # score tracks hits to ships
-    # values are deducted until zero is reached
-    # player wins when all entries are zero
+    prevHumanHits = set()                                 # Prevents human from entering a previous hit
+    humanShips = {}                                       # Human ships coordinates (immutable)
+    aiShips = {}                                          # AI ships coordinates     (immutable)
+    aiShipsRemaining = {'S1':1, 'S2':1, 'D1':2,        
+                        'D2':2, 'C':3, 'B':4, 'A':5}      # Surviving AI ships
+    humanShipsRemaining = {'S1':1, 'S2':1, 'D1':2,
+                            'D2':2, 'C':3, 'B':4, 'A':5}  # Surviving human ships
+    shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2,            
+                  'C':3, 'B':4, 'A':5}                    # Number of cells to each ship type
+
     def __init__(self):
+        pass
+       
+    '''
+    Hit has been confirmed
+    Update ship information
+    
+    '''
+    def keepScore(self, shipKey, opponent):                     
+        
+        if opponent == 'human':                             # Record number of cells left for human ship  
+            self.humanShipsRemaining[shipKey] = self.humanShipsRemaining[shipKey] - 1                               
+            if self.humanShipsRemaining[shipKey] == 0:      # If cells for a ship drops to zero,
+                del self.humanShipsRemaining[shipKey]       # delete the ship
+                return shipKey[0], shipKey                  # Return 1st letter of ship type sunk and its key
+        else:                                               # Record number of cells left for AI ship 
+            self.aiShipsRemaining[shipKey] = self.aiShipsRemaining[shipKey] - 1                                      
+            if self.aiShipsRemaining[shipKey] == 0:         # If cells for a ship drops to zero,
+                del self.aiShipsRemaining[shipKey]          # delete the ship
+                return shipKey[0], shipKey                  # Return 1st letter of ship type sunk and its key
+        return 'X', None                                    # Returns a 'X' if no ship is sunk
+    
+    '''
+    Number of ships remaining for 
+    the type of player
+    
+    ''' 
+    def getNumOfShips(self, playerType):
 
-        self.createShips()
-        
-    # DEBUG
-    # Prints all ships on game grid
-    def printAIShips(self):
-        
-        grid = GameGrid()
-        for shipKey, shipSet in self.ships.items():
-            for cell in shipSet:
-                grid.updateAI(cell, self.reportShip(shipKey))  
-        grid.display()
-
-    # Returns a 'X' if no ship is sunk
-    # or
-    # Returns first letter of ship type sunk
-    def keepScore(self, shipKey):
-        
-        self.score[shipKey] = self.score[shipKey] - 1
-        if self.score[shipKey] == 0:
-            return self.reportShip(shipKey), shipKey
-        else:
-            return 'X', None
-     
-    # Create All Ships
-    def createShips(self):
-                                  
-        for shipKey, shipSize in self.shipSizes.items():
-               
-            # Keep placing ship until it fits onto the grid.
-            while not self.placeShip(shipSize):
-                pass
-            # Place ship
-            self.ships[shipKey] = self.tempSet.copy()
-            self.tempSet.clear()
-     
-    # Given player's guess
-    # A hit returns True and updates score
-    # A miss returns False     
-    def fire(self,guess):
-        
-        for shipKey, ship in self.ships.items():
-            # Hit
-            if guess in ship: 
-                label, shipKey = self.keepScore(shipKey) 
-                return True, label, shipKey
-        # Miss
-        return False, None, None
-
-    # Randomly places one ship 
-    # Returns True if placement is successful (i.e. No Collisions)
-    def placeShip(self, size):
-  
-        # determine horizontal or vertical placement
-        direction = randint(0,1)
-        # restrict ship within columns or rows
-        index = randint(0, 9-size) 
-        
-        # horizontal - only columns change
-        if (direction==0):                          
-            row = self.rowKeys[randint(0,9)]
-            col = self.colKeys[index]    
-            return self.generateCells(row, col, size, index, direction)
-        
-        #vertical - only rows change   
-        else:                                          
-            row = self.rowKeys[index] 
-            col = self.colKeys[randint(0,9)] 
-            return self.generateCells(row, col, size, index, direction) 
-
-    # Return True if no collision is detected
-    tempSet = set()   
-    def generateCells(self, row, col, size, index, direction):
-        
-        cell = row + col
-        # Generate next adjacent cell until collision detected  
-        while not self.isCollision(cell,"AI") and size > 0:
-            self.tempSet.add(cell)
-            index += 1
-            # horizontal
-            if direction == 0:
-                # check for index out of bounds error
-                if index < len(self.colKeys):
-                    col = self.colKeys[index] 
-                else:           
-                    break
-            # vertical
-            else:
-                # check for index out of bounds error
-                if index < len(self.rowKeys):
-                    row = self.rowKeys[index] 
-                else:         
-                    break
+        if playerType == 'human':                           # Human
+            total = len(self.humanShipsRemaining)           # Returns the number of human ships left
+        else:                                               # AI
+            total = len(self.aiShipsRemaining)              # Returns the number of AI ships left
+        return total
                 
-            cell = row + col 
-            size-=1 
+    '''
+    Determines if a shot hits an opponent
+    
+    '''    
+    def fire(self, guess, opponent):
         
-        # No Collision detected
-        # Save generated cells
-        if size == 0:
-            return True
-        # Collision detected
-        # Discard generated cells
-        else:
-            self.tempSet.clear()
-            return False
+        if opponent == 'human':                             # human opponent
+            for shipKey, ship in self.humanShips.items():   # Check if human ship is hit 
+                if guess in ship:                           # If hit,      
+                    label, shipKey = self.keepScore(        
+                                        shipKey, opponent)  # update ship information
+                    return True, label, shipKey             # Return hit results
+        else:                                               # AI opponent  
+            while guess in self.prevHumanHits:              # Make sure not previously guessed hit
+                guess = raw_input("Guess again: ").upper()        
+            for shipKey, ship in self.aiShips.items():      # Check if shot hit an AI Ship
+                if guess in ship:                           # If hit,
+                    self.prevHumanHits.add(guess)           # Add to set of previously guessed hits
+                    label, shipKey = self.keepScore(
+                                        shipKey, opponent)  # and update ship information
+                    return True, label, shipKey             # Return hit results                                                                   
+        return False, None, None                            # If miss, return miss results
 
-    # Returns True if collision detected
-    def isCollision(self, cell, user):
+    '''
+    Called during ship placement phase
+    Determines if a collision occurred
+    to make sure ships don't overlap
+    Ship placements are stored in this class
+    
+    '''
+    def isCollision(self, cell, player):
         
-        # Human Request
-        if user == 'player':
-
-            #DEBUGprint "Player ships ", self.playerShips 
-            
-            # Check collisions with Human ships already placed
-            for shipKey, shipSet in self.playerShips.items():
-                if cell in shipSet:
-                    
-                    #DEBUG print "COLLISION!" 
-                    
+        if player == 'human':                                # Human Request
+            for shipKey, shipSet in self.humanShips.items(): # Check against human ships already placed
+                if cell in shipSet:                                  
                     return True
                 else:
-                    continue
-        # AI Request
-        else:
-            # Check collisions with Human ships already placed
-            for shipKey, shipSet in self.ships.items():
+                    continue   
+        else:                                               # AI Request
+            for shipKey, shipSet in self.aiShips.items():   # Check against AI ships already placed
                 if cell in shipSet:
                     return True
                 else:
                     continue
         return False
-                   
-    def reportShip(self, shipKey):
         
-        if shipKey == 'D1' or shipKey == 'D2':
-            return "D"
-        elif shipKey == 'S1' or shipKey == 'S2':
-            return "S"
-        else:
-            return shipKey
-        
-    def addShip(self, ship, label):
-        self.playerShips[label] = ship
-        
-    def getPlayerShips(self):
-        return self.playerShips
-        
-'''
-# Test isCellTaken
-logic = GameLogic()
-print logic.isCellTaken("i8")
-print logic.isCellTaken("f5")
-'''
-       
-# Test Place Ships Logic
-# GameLogic().printAIShips()
-
-
-
-'''
-
-#These "asserts" using only for self-checking      
-if __name__ == '__main__':
-    assert GameLogic().reportShip(1)=="Submarine", "wrong type"
-    assert GameLogic().reportShip(3)=="Cruiser", "wrong type"
-    assert GameLogic().placeShip(5)==True, "failed placing ship"
-    assert GameLogic().placeShip(4)==True, "failed placing ship"
-    assert GameLogic().placeShip(3)==True, "failed placing ship"
-    assert GameLogic().placeShip(2)==True, "failed placing ship"
-    assert GameLogic().placeShip(1)==True, "failed placing ship"
+    '''
+    Called during ship placement phase
+    Depending on the player placing the ship,
+    adds a ship to either
+    humanShips dictionary or
+    aiShips dictionary
     
-    #assert GameLogic().placeShip(0)==False, "non-existent ship"
-
-'''
-   
-        
-        
-
+    '''
+    def addShip(self, ship, label, player):
+        if player == 'human':                               # Human Request
+            self.humanShips[label] = ship                   # Adds ship to humanShips
+        else:                                               # AI Request
+            self.aiShips[label] = ship                      # Adds ship to aiShips
+            
         
   
 

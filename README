@@ -1,21 +1,30 @@
+GameLoop
+
+* Program entry point
+
+* Test mode
+
+* Game mode
+
+* Manages player turns
+
+
 GameLogic
 
-* Keeps Score
+* Tracks ship locations
 
-* Determines Hit/Miss
+* Records hits sustained by each ship
 
-* Determines if ships are sunk
+* Knows number of ships still floating 
 
-* Knows placement of all ships
-
-* Checks if placement of ship is valid
+* Prevents ships from overlapping during placement
 
 * Processes fire orders from player and AI
 
 
-Player View
+HumanView
 
-* Guides player in ship placement
+* Guides player's ship placement
 
 * Allows player to issue fire order
 
@@ -24,22 +33,37 @@ GameGrid
 
 * Displays AI and Player grids
 
-* is updated by Game Loop Manager
-
 * Displays Player only grid for initial ship placement
 
-AI View
 
-* Randomly places ships
+AI_View
 
-* Decision system sends guess to Game Logic
+* Randomly places its ships on the grid
+
+* Decision system makes guesses
+
+* Contains __test_setup method that displays all
+  AI ships on the grid
 
 
-Game Manager
+View
+
+* Base class for each type of player interface
+
+* Generates a complete ship
+
+* Contains ship overlap detection logic
+
+
+GameLoop
 
 * manages turns between AI and Player
 
-* determines when to display grid
+* determines when to display results and grid
+
+* contains testMode method that auto plays
+
+* Program Entry
 
 * shuts game down
 

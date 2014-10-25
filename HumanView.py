@@ -1,39 +1,76 @@
 '''
+Human player interface
+
+
 Created on Oct 19, 2014
 
 @author: Ray "Cyberpup" Tong
 '''
 
-'''
-Human Player Game Interface
+from View import View
+from random import randint                      #DEBUG
 
-
-Wish Features:
-Input validation
-Add ability to change placements
-'''
-
-from GameGrid import GameGrid
-from GameLogic import GameLogic
-
-class HumanView:
-
-    rowKeys = "ABCDEFGHIJ"
-    colKeys = "0123456789"
-    score = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
-    shipSizes = {'S1':1, 'S2':1, 'D1':2, 'D2':2, 'C':3, 'B':4, 'A':5}
+class HumanView(View):
+ 
+    directionKey = ['H','V']                    #DEBUG (AUTOMATES SHIP ENTRIES)
     
-    # Inflate HumanView object
-    # Initiate Setup mode
-    # Exits Setup after all ships are placed
-    def __init__(self):  
-        self.shipKeys = self.shipSizes.keys() # PyListObject
-        self.grid = GameGrid()
-        self.logic = GameLogic()
-        self.setup(self.shipKeys)
+    def __init__(self, logic, grid):            # Initiate Setup mode
+        
+        self.logic = logic
+        self.grid = grid  
+        self.shipKeys = self.shipSizes.keys()   # PyListObject, tracks ships yet to be placed
+        self.__manual_setup(self.shipKeys)      # Human player places ships
+        #self.__auto_setup(self.shipKeys)        # Randomly places ships
+  
+    '''
+    Automatically places all ships for player
+    
+    '''
+    def __auto_setup(self, shipKeys):                                   # DEBUG 
+        
+        for shipType, shipSize in self.shipSizes.items():               # Go through available ships       
+            while (len(shipKeys) > 0):                                  # Place ships until all are placed. 
+                cell, direction = self.__auto_placeShip(shipSize)       # Randomly generate a start point
+                if self.generateCoordinates(cell, 
+                                self.shipSizes[shipType], direction):   # Generate a complete ship     
+                    if not self.detectCollision("human", self.logic):   # Ship doesn't overlap other ships   
+                        shipKeys.remove(shipType)                       # Ship placed, remove from checklist 
+                        self.logic.addShip(self.tempSet.copy(),
+                                            shipType, 'human')          # Save ship in Game Logic
 
-    #PRIVATE
-    def displayMenu(self, shipKeys):
+                        for cell in self.tempSet:                       # update grid with new ship
+                            label = shipType[0]
+                            self.grid.update(cell, label, "human")         
+                        self.tempSet.clear()                            # Ship placed, remove it from temp
+                    else:                                               # Ship overlaps another ship
+                        continue                                        # Keep placing ships
+                break                                                   # All ships placed
+       
+    '''
+    Generate a random starting point for a ship 
+    
+    '''
+    def __auto_placeShip(self, size):               # DEBUG
+  
+        direction = randint(0,1)                    # determine horizontal or vertical placement     
+        index = randint(0, 9-size)                  # restrict ship within columns or rows
+         
+        if (self.directionKey[direction]=='H'):     # Horizontal - only columns change                 
+            row = self.rowKeys[randint(0,9)]
+            col = self.colKeys[index]    
+        else:                                       # Vertical - only rows change   
+            row = self.rowKeys[index] 
+            col = self.colKeys[randint(0,9)]
+        cell = row + col                            
+        return cell, self.directionKey[direction]   # Return a starting point and a direction
+
+    '''
+    Displays a menu of the ships that need 
+    to be placed by human player.
+     
+    '''
+    def __displayMenu(self, shipKeys):
+        
         print("Key        Ship         Size")
         if 'A' in shipKeys:
             print(" A    Aircraft Carrier   5")
@@ -56,107 +93,98 @@ class HumanView:
         if 'S2' in shipKeys:
             print(" S2   Submarine2         1")
              
-    # Returns set of coordinates for collision detection
-    # ADD CHECK FOR VALID INPUTS
-    #PRIVATE
-    def setup(self, shipKeys):
-
-        while (len(shipKeys) > 0):
-            self.grid.displayPlayer()
-            self.displayMenu(self.shipKeys)
-            print ""
-            shipType = raw_input("Choose ship key: ").upper()
-            direction = raw_input("Place ship horizontally or vertically (H/V): ").upper()
-            if direction == 'H':
-                cell = raw_input("Choose leftmost end of ship (i.e. 'A4'): ").upper()
-            else:
-                cell = raw_input("Choose Topmost end of ship (i.e. 'A4'): ").upper()
-
-            if self.generateCoordinates(cell, self.shipSizes[shipType], direction):
-                # Collision detection passed
-                if not self.requestCollisionDetect():
-                    # remove element from shipkeys
-                    shipKeys.remove(shipType)
-   
-                    # DEBUG print "Adding this to logic ", self.tempSet 
-                    
-                    # store ship in Game Logic
-                    self.logic.addShip(self.tempSet.copy(), shipType)
-                    
-                    # update display
-                    for cell in self.tempSet:
-                        label = shipType[0]
-                        self.grid.update(cell, label, "player")
-                    self.tempSet.clear()
-                        
-                # Collision detection failed
-                else:
-                    continue
-        '''
-        DEBUG
-        print self.logic.getPlayerShips()   
-        '''
+    '''
+    Human player manually places the ships on
+    the game grid.
     
-    # Returns False if no collisions detected
-    # PRIVATE
-    def requestCollisionDetect(self):
-        # pass each cell in tempSet of current ship to GameLogic
-        # GameLogic will return True if collision occurs
-        for cell in self.tempSet:
-            if self.logic.isCollision(cell, "player"):
-                #DEBUG print "Collision!" 
-                return True        
-        return False
-    
-    # (String, int, String)
-    # Returns a set of cells 
-    tempSet = set()  
-    # PRIVATE 
-    def generateCoordinates(self, cell, size, direction):
-        self.tempSet.clear()
-        row, col = cell[0], cell[1]
-        # Horizontal Placement (Row is constant)
-        if direction == 'H':
-            index = self.colKeys.index(col)
-            while size > 0:
-                # check for index out of bounds error
-                if index < len(self.colKeys):
-                    col = self.colKeys[index]
-                    size -= 1
-                    index += 1 
-                    cell = row + col
-                    self.tempSet.add(cell)
-                else:
-                    break
-        # Vertical Placement (Column is constant)
-        else:
-            index = self.rowKeys.index(row)
-            while size > 0:
-                # check for index out of bounds error
-                if index < len(self.rowKeys):
-                    row = self.rowKeys[index]
-                    size -= 1
-                    index += 1 
-                    cell = row + col
-                    self.tempSet.add(cell)
-                else:
-                    break
-                
-        # Out of bounds detected
-        # Discard generated cells (returns an empty set)
-        if not size == 0:
-            self.tempSet.clear()
-            return False
-        return True
+    '''
+    def __manual_setup(self, shipKeys):
+        
+        while (len(shipKeys) > 0):                  # Place ships until all are placed.
+            shipType = "Invalid"                    # Initialize variables to stop infinite loop
+            direction = "Invalid"
+            cell = "Invalid"
             
-    def test(self, a, b='B', c='C', d1='D1', d2='D2', s1='S1', s2='S2'):
-        self.grid.displayPlayer()
-        shipKeys = {a, b, c, d1, d2, s1, s2}
-        self.displayMenu(shipKeys)
-        self.askPlayer(shipKeys)
+            self.grid.display("human")              # Show grid of ships placed by human player
+            self.__displayMenu(self.shipKeys)       # Show menu of ships that need to be placed
+            print ""
+            
+            while not self.validShipType(shipType):                 # Choose ship type until valid
+                shipType = raw_input("Choose ship key: ").upper()
+                
+            while not self.validDirection(direction):               # Choose direction until valid
+                direction = raw_input("Place ship horizontally or vertically (H/V): ").upper()
+            
+            while not self.isValid(cell):                           # Choose starting cell until valid
+                if direction == 'H':
+                    cell = raw_input("Choose leftmost end of ship (i.e. 'A4'): ").upper()
+                else:
+                    cell = raw_input("Choose Topmost end of ship (i.e. 'A4'): ").upper()   
+            if self.generateCoordinates(cell, 
+                            self.shipSizes[shipType], direction):   # Generate a complete ship   
+                if not self.detectCollision("human", self.logic):   # Ship doesn't overlap other ships
+                    shipKeys.remove(shipType)                       # Ship placed, remove from checklist  
+                    self.logic.addShip(self.tempSet.copy(), 
+                                       shipType, 'human')           # Save ship in Game Logic    
+                    for cell in self.tempSet:                       # update grid with new ship
+                        label = shipType[0]
+                        self.grid.update(cell, label, "human")
+                    self.tempSet.clear()                            # Ship placed, remove it from temp
+                else:                                               # Ship overlaps another ship
+                    continue                                        # Keep trying until all ships placed
 
-'''
-Test
+    '''
+    
+    Make sure direction is valid
+    
+    '''
+    def validDirection(self, direction):
+        
+        if direction[0] == 'H' or direction[0] == 'V':
+            return True
+        else:
+            return False
+        
+    '''
+    
+    Make sure ship type is valid
+    
+    '''
+    def validShipType(self, shipType):
+        
+        if shipType in self.shipKeys:
+            return True
+        else:
+            return False
 
-HumanView()   
-'''
+    '''
+    
+    Determines if human player's guess is
+    a valid point on the game grid.
+
+    '''
+    def isValid(self, entry): 
+
+        row = "ABCDEFGHIJ"
+        col = "0123456789"
+        
+        if not len(entry)==2:                       # Entry must be two characters long
+            return False                            
+        elif entry[0] in row and entry[1] in col:   # Entry must conform to grid format
+            return True
+        else:                                       # Entry is not valid
+            return False
+    
+    '''
+    
+    Asks for human player's guess
+      
+    '''
+    
+    def guess(self):
+        guess = raw_input("Your guess: ").upper()
+        while not self.isValid(guess):                          # Guess again if guess is invalid
+            guess = raw_input("Please guess again: ").upper()
+            print""   
+        return guess                                            # Returns human player's guess
+  
