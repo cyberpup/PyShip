@@ -76,20 +76,23 @@ class GameLoop:
     
         """)
     
+    '''
+    Auto plays
+    
+    '''
+    
     def testMode(self):
         
         row = "ABCDEFGHIJ"
         col = "0123456789"
         pastGuesses = set()
-        guess = "dummyvalue"
         
         while True:                                     # Main loop
             self.grid.displayDual()                     # Display game grid  
+            guess = row[randint(0,9)] + col[randint(0,9)]
             while guess in pastGuesses:
-                index_r = randint(0,9)
-                index_c = randint(0,9)
-                guess = row[index_r] + col[index_c]     # Human's turn to fire 
-                pastGuesses.add(guess) 
+                guess = row[randint(0,9)] + col[randint(0,9)]    
+            pastGuesses.add(guess) 
             print guess                          
             self.shootAt(guess, "AI")                                 
             if self.game.getNumOfShips('AI') == 0:      # If human wins, game's over
@@ -103,6 +106,11 @@ class GameLoop:
         print ""
         print "FINAL"
         self.grid.displayDual()                         # Display final grids
+    
+    '''
+    Human vs AI play
+    
+    '''
     
     def gameMode(self):
         while True:                                     # Main loop
@@ -126,5 +134,5 @@ Program Entry
 
 '''
 pyship = GameLoop()
-pyship.testMode()
-# pyship.gameMode()
+#pyship.testMode()
+pyship.gameMode()

@@ -17,9 +17,9 @@ class GameGrid:
     rowkeys = "ABCDEFGHIJ"
 
     def __init__(self):                                  
-        self.aiGrid = [["O" for col in range(10)]       # Initializes Grid for AI
+        self.aiGrid = [["O" for col in range(10)]       # Initializes Grid for AI player
                        for row in range(10)]
-        self.humanGrid = [["O" for col in range(10)]    # Initialize Grid for Human
+        self.humanGrid = [["O" for col in range(10)]    # Initialize Grid for Human player
                           for row in range(10)]
      
     '''
@@ -71,18 +71,11 @@ class GameGrid:
         print "   Place Your Ships"
         print "  0 1 2 3 4 5 6 7 8 9"
         if user == 'human':
-            for row in self.humanGrid:
+            for row in self.humanGrid:                   
                 print self.rowkeys[i],
                 i+=1
                 for col in row:
                     print col,
-                print ""
-        else:
-            for row in self.aiGrid:
-                print self.rowkeys[i],
-                i+=1
-                for col in row:
-                    print col,
-                print ""
+                print ""     
         print ""            
     
