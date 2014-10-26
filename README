@@ -1,3 +1,5 @@
+Other than for fun, the purpose of this code is to provide a baseline for testing machine learning alogorithms. If you want to use this code to test your own algorithms, just rewrite the guess method in AI_View.py and return a guess string in alphanumeric format (i.e. 'A10', 'E5') Have fun!
+
 GameLoop
 
 * Program entry point
